@@ -1,0 +1,40 @@
+# Secrets — never commit any of these
+.env
+.env.local
+.env.*.local
+!.env.example
+*.pem
+*.key
+*.p12
+*credentials*
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+
+# Node / Next
+node_modules/
+web/.next/
+web/out/
+web/node_modules/
+.next/
+dist/
+
+# Logs & OS junk
+*.log
+.DS_Store
+Thumbs.db
+
+# Books the product uses
+Docs/
+
+# Demo / test artifacts — fictional CVs, real uploaded data, rapport PDFs
+samples/
+staging_backups/
+compare-*.json
+last_run.json
+retry_specialists.py

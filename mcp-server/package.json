@@ -1,0 +1,22 @@
+{
+  "name": "coach-mcp",
+  "version": "1.0.0",
+  "description": "Unified MCP server for Evolve AI coach � all tools for all agents, MongoDB (coach DB)",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "coach-mcp": "src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node scripts/smoke-test.js",
+    "seed": "node scripts/seed.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "mongodb": "^7.9.0"
+  }
+}
