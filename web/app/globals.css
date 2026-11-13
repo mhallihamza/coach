@@ -246,7 +246,7 @@ footer.site { border-top: 1px solid var(--line); padding: 2.5rem 0 2rem; color: 
 .chat-shell { display: grid; grid-template-columns: 1fr 340px; gap: 1rem; height: calc(100svh - 8.5rem); }
 .chat-window { display: flex; flex-direction: column; }
 .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: .65rem; padding: .35rem .2rem; }
-.msg { max-width: 78%; padding: .7rem .95rem; border-radius: 16px; font-size: .92rem; line-height: 1.55; }
+.msg { max-width: 78%; padding: .7rem .95rem; border-radius: 16px; font-size: .92rem; line-height: 1.55; white-space: pre-wrap; word-break: break-word; }
 .msg.assistant { background: var(--paper); border: 1px solid var(--line); border-bottom-left-radius: 4px; align-self: flex-start; }
 .msg.user { background: var(--forest); color: #f2efe6; border-bottom-right-radius: 4px; align-self: flex-end; }
 .msg-meta { font-size: .68rem; color: var(--ink-soft); margin-top: .3rem; }
