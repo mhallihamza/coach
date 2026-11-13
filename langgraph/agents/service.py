@@ -86,8 +86,28 @@ async def run(slug: str, body: RunIn) -> JSONResponse:
         return JSONResponse(wrap_langflow_output(session_id, body.input_value, envelope))
 
     history = load_history(authorized.get("conversation_id"), user_id)
+    # ALWAYS pre-fetch the CV — LLM tool-calls are unreliable on small models.
+    from mcp_client import call_tool
+    cv_text = ""
+    try:
+        cv_result = await call_tool("search_cv", {"userId": user_id, "query": "formation experience emploi stage mission role responsable analyse finance comptable gestion", "limit": 5})
+        if isinstance(cv_result, dict) and cv_result.get("ok"):
+            passages = cv_result.get("passages") or []
+            if passages:
+                chunks = []
+                for p in passages:
+                    excerpt = p.get("excerpt") if isinstance(p, dict) else str(p)
+                    chunks.append(f"• {str(excerpt)[:600]}")
+                cv_text = "\n".join(chunks)
+    except Exception:
+        cv_text = ""
+    cv_block = (
+        f"\n\nUSER'S CV EXCERPTS (from search_cv, authoritative):\n{cv_text}\n"
+        if cv_text else
+        "\n\nUSER HAS NO CV ON FILE OR IT IS INACCESSIBLE — say you don't have it and ask the user to upload it."
+    )
     messages = [
-        {"role": "system", "content": f"Reply in {language}.\n\n{AGENT_SYSTEMS[AGENT_NAME]}"},
+        {"role": "system", "content": f"Reply in {language}.\n\n{AGENT_SYSTEMS[AGENT_NAME]}\n{cv_block}"},
         *history,
         {"role": "user", "content": (
             "authorized_context: " + json.dumps(authorized, ensure_ascii=False) + "\n\n"
