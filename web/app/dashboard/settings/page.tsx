@@ -9,10 +9,17 @@ const CONSENTS = [
   { key: 'weeklyEmail', label: 'Email hebdomadaire', desc: 'Un résumé de votre semaine chaque dimanche : progrès, limites, prochaine étape.' },
 ];
 
+const LANG_OPTIONS: { key: 'fr' | 'ar' | 'en'; label: string; hint: string }[] = [
+  { key: 'fr', label: 'Français', hint: 'Questions, réponses et rapports générés en français.' },
+  { key: 'ar', label: 'العربية', hint: 'أسئلة وردود وتقارير مولّدة باللغة العربية.' },
+  { key: 'en', label: 'English', hint: 'Questions, answers and reports generated in English.' },
+];
+
 export default function SettingsPage() {
   const [state, setState] = useState<Record<string, boolean>>({
     longTermMemory: false, cvAnalysis: false, pdfReports: false, weeklyEmail: false,
   });
+  const [language, setLanguage] = useState<'fr' | 'ar' | 'en'>('fr');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,6 +32,8 @@ export default function SettingsPage() {
           for (const k of Object.keys(next)) next[k] = bool(d.consents[k]);
           return next;
         });
+        const lang = (d.language as 'fr' | 'ar' | 'en') ?? 'fr';
+        if (lang === 'fr' || lang === 'ar' || lang === 'en') setLanguage(lang);
         setLoading(false);
       })
       .catch((e) => { setError(e instanceof Error ? e.message : 'Erreur de chargement'); setLoading(false); });
@@ -37,6 +46,11 @@ export default function SettingsPage() {
       setError(e instanceof Error ? e.message : 'Échec de l’enregistrement');
       setState({ ...state, [key]: !nextValue });
     });
+  }
+
+  function pickLang(next: 'fr' | 'ar' | 'en') {
+    setLanguage(next);
+    updateSettings({}, next).catch(() => { /* persistence optional — UI still updates */ });
   }
 
   if (loading) {
@@ -53,7 +67,18 @@ export default function SettingsPage() {
       <div className="panel-head"><h2>Réglages & confidentialité</h2><span className="chip chip-ok">enregistré automatiquement</span></div>
       {error && <div className="form-error">{error}</div>}
       <p style={{ fontSize: '.9rem', color: 'var(--ink-soft)', lineHeight: 1.65, marginBottom: '1.2rem' }}>Chaque consentement est indépendant. Désactiver n’efface rien immédiatement ; la suppression complète est disponible ci-dessous.</p>
-      <div style={{ display: 'grid', gap: '.7rem' }}>
+
+      <span className="mini-label">Langue coach</span>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '.5rem', marginTop: '.4rem' }}>
+        {LANG_OPTIONS.map(opt => (
+          <button key={opt.key} type="button" onClick={() => pickLang(opt.key)}
+            style={{ border: `2px solid ${language === opt.key ? 'var(--pine)' : 'var(--line)'}`, background: language === opt.key ? 'rgba(23,92,61,.08)' : '#fff', color: 'var(--forest-deep)', borderRadius: 14, padding: '.6rem .6rem', textAlign: 'left', cursor: 'pointer', fontSize: '.88rem', fontWeight: 600 }}>
+            {opt.label}<br /><small style={{ fontWeight: 400, color: 'var(--ink-soft)', fontSize: '.78rem', lineHeight: 1.35 }}>{opt.hint}</small>
+          </button>
+        ))}
+      </div>
+
+      <div style={{ display: 'grid', gap: '.7rem', marginTop: '1.2rem' }}>
         {CONSENTS.map((c) => (
           <label key={c.key} style={{ display: 'flex', alignItems: 'center', gap: '.9rem', border: '1px solid var(--line)', borderRadius: 14, padding: '.9rem 1rem', cursor: 'pointer' }}>
             <input type="checkbox" checked={state[c.key]} onChange={() => toggle(c.key)} style={{ width: 20, height: 20, accentColor: 'var(--pine)' }} />

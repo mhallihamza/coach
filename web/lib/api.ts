@@ -106,12 +106,28 @@ export interface CvSummary { id: string; fileName: string; chunksCount: number; 
 export const listMyCvs = () =>
   req<{ cvs: CvSummary[] }>('/api/career/cvs');
 
+// Audio chat — Mistral Voxtral STT in, coach reply out; speechOut disabled by default
+export interface AudioChatResponse { conversationId: string; reply: string; transcript: string; source: string }
+export async function sendAudioMessage(file: Blob, conversationId?: string, language?: string): Promise<AudioChatResponse> {
+  const form = new FormData();
+  form.append('file', file, 'voice.webm');
+  if (conversationId) form.append('conversationId', conversationId);
+  if (language) form.append('language', language);
+  const t = getToken();
+  const res = await fetch(`${BASE}/api/chat/audio`, { method: 'POST', body: form, headers: t ? { Authorization: `Bearer ${t}` } : {} });
+  if (res.status === 401) { clearToken(); if (typeof window !== 'undefined') window.location.href = '/auth'; throw new Error('Session expirée'); }
+  const data = await res.json().catch(() => ({})) as { detail?: string };
+  if (!res.ok) throw new Error((data as { detail?: string }).detail ?? `Erreur ${res.status}`);
+  return data as unknown as AudioChatResponse;
+}
+
 // ─── Settings (consents + objective) ───
 export interface ObjectiveInfo { targetRole?: string; horizonMonths?: number; weeklyHours?: number; motivation?: string }
-export interface SettingsData { consents: Record<string, boolean>; objective: ObjectiveInfo | null; cvCount: number }
+// Update: extend settings with language and audio message support
+export interface SettingsData { consents: Record<string, boolean>; objective: ObjectiveInfo | null; cvCount: number; language?: string }
 export const getSettings = () => req<SettingsData>('/api/settings');
-export const updateSettings = (consents: Record<string, boolean>) =>
-  req<SettingsData>('/api/settings', { method: 'POST', body: JSON.stringify({ consents }) });
+export const updateSettings = (consents: Record<string, boolean>, language?: string) =>
+  req<SettingsData>('/api/settings', { method: 'POST', body: JSON.stringify({ consents, ...(language ? { language } : {}) }) });
 
 // ─── Career objective ───
 export interface ObjectiveBody { targetRole: string; horizonMonths: number; weeklyHours: number; motivation?: string }

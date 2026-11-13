@@ -5,6 +5,8 @@ Reçoit les messages du frontend Next.js et les transmet au workflow Langflow
 intégré répond (jamais silencieux), ce qui permet de démontrer le produit sans flux.
 """
 import json
+import os
+import time as _time
 import re as _re
 from datetime import datetime, timezone
 from typing import Any, Optional
@@ -59,6 +61,7 @@ class ChatIn(BaseModel):
 
 class SettingsIn(BaseModel):
     consents: Optional[dict[str, bool]] = None
+    language: Optional[str] = Field(default=None, pattern="^(ar|fr|en)$")
 
 
 class ObjectiveIn(BaseModel):
@@ -538,10 +541,12 @@ def get_settings(current=Depends(get_current_user)):
     uid = current["sub"]
     consents = {c["consentType"]: c.get("granted", False) for c in db.consents.find({"userId": uid})}
     objective = db.career_objectives.find_one({"userId": uid}, {"_id": 0})
+    user_doc = db.users.find_one({"userId": uid}, {"passwordHash": 0}) or {}
     return {
         "consents": consents,
         "objective": objective,
         "cvCount": db.cvs.count_documents({"userId": uid}),
+        "language": user_doc.get("language") or "fr",
     }
 
 
@@ -557,6 +562,9 @@ def update_settings(body: SettingsIn, current=Depends(get_current_user)):
                 {"$set": {"userId": uid, "consentType": k, "granted": bool(v), "updatedAt": utcnow()}},
                 upsert=True,
             )
+    if body.language:
+        db.users.update_one({"userId": uid}, {"$set": {"language": body.language, "updatedAt": utcnow()}})
+        db.profiles.update_one({"userId": uid}, {"$set": {"language": body.language, "updatedAt": utcnow()}}, upsert=True)
     return get_settings(current)
 
 
@@ -583,3 +591,41 @@ def health():
 from . import reports  # noqa: E402
 
 app.include_router(reports.router, prefix='/api')
+
+
+# ───────────────────────── Audio (STT Mistral → pipeline texte) ─────────────────────────
+
+@app.post("/api/chat/audio")
+async def chat_audio(
+    file: UploadFile = File(...),
+    conversationId: Optional[str] = Form(None),
+    language: Optional[str] = Form(None),
+    current=Depends(get_current_user),
+):
+    uid = current["sub"]
+    mic_key = os.environ.get("MISTRAL_API_KEY", "")
+    if not mic_key:
+        raise HTTPException(status_code=503, detail="MISTRAL_API_KEY non configurée.")
+    raw = await file.read()
+    if len(raw) > 25 * 1024 * 1024:
+        raise HTTPException(status_code=413, detail="Audio trop volumineux (max 25 Mo).")
+
+    user_doc = db.users.find_one({"userId": uid}) or {}
+    lang = language or user_doc.get("language") or "fr"
+
+    async with httpx.AsyncClient(timeout=90) as client:
+        resp = await client.post(
+            "https://api.mistral.ai/v1/audio/transcriptions",
+            files={"file": (file.filename or "voice.webm", raw, file.content_type or "audio/webm")},
+            data={"model": "voxtral-mini-latest", "language": lang},
+            headers={"Authorization": f"Bearer {mic_key}"},
+        )
+    if resp.status_code >= 400:
+        raise HTTPException(status_code=502, detail=f"Transcription échouée: {resp.text[:200]}")
+    transcript = (resp.json() or {}).get("text", "").strip()
+    if not transcript:
+        return {"conversationId": conversationId or "", "reply": "Je n’ai pas bien entendu. Pouvez-vous reformuler ?", "transcript": "", "source": "audio"}
+
+    result = await chat(ChatIn(message=transcript, conversationId=conversationId), current)
+    result["transcript"] = transcript
+    return result

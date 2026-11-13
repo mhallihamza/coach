@@ -192,10 +192,9 @@ def build_graph():
                 f"Intent: {', '.join(intents)}\n"
                 f"User says: {state['user_message']}\n\n"
                 f"Specialists returned:\n{specs_summary}",
-                max_tokens=500,
+                max_tokens=2400,
             )
-            import sys
-            return
+
         # quality gate — same port family, same HTTP contract
         async with httpx.AsyncClient() as client:
             gate_text = await call_specialist(
