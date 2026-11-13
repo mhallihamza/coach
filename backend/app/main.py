@@ -221,24 +221,43 @@ async def ask_agentic_pipeline(user_id: str, message: str, conversation_id: str)
 
 
 def _extract_langflow_text(data: dict[str, Any]) -> Optional[str]:
-    """Langflow 1.7 /run shapes: ChatOutput → results.message.text ; TextOutput → results.text.data.text."""
+    """Langflow 1.7 /run shapes + nested supervisor envelopes."""
+    def _unwrap(t: str) -> str:
+        """If the text is itself a JSON envelope, promote its message_to_user / result reply."""
+        s = t.strip()
+        if not s.startswith("{"):
+            return t
+        try:
+            inner = json.loads(s)
+        except Exception:
+            return t
+        if not isinstance(inner, dict):
+            return t
+        cand = inner.get("message_to_user")
+        if isinstance(cand, str) and cand.strip():
+            return cand
+        res = inner.get("result") if isinstance(inner.get("result"), dict) else {}
+        for k in ("message_to_user", "reply", "answer", "research"):
+            v = res.get(k)
+            if isinstance(v, str) and v.strip():
+                return v
+        return t
+
     try:
         outputs = data.get("outputs", [])
         results = (outputs[0].get("outputs") or [{}])[0].get("results") or {}
-        # ChatOutput
         msg = results.get("message")
         if isinstance(msg, dict):
             t = msg.get("text")
             if t:
-                return t
-        # TextOutput / generic: scan dict values for a usable .text
+                return _unwrap(t)
         for v in results.values():
             if not isinstance(v, dict):
                 continue
             t = (v.get("data") or {}).get("text") if isinstance(v.get("data"), dict) else None
             t = t or v.get("text") or (v.get("message") or {}).get("text")
             if t:
-                return t
+                return _unwrap(t)
     except Exception:
         pass
     return None
