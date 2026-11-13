@@ -57,6 +57,10 @@ class ChatIn(BaseModel):
     conversationId: Optional[str] = None
 
 
+class SettingsIn(BaseModel):
+    consents: Optional[dict[str, bool]] = None
+
+
 # ───────────────────────── Utilitaires ─────────────────────────
 
 def utcnow() -> datetime:
@@ -223,25 +227,33 @@ async def ask_agentic_pipeline(user_id: str, message: str, conversation_id: str)
 def _extract_langflow_text(data: dict[str, Any]) -> Optional[str]:
     """Langflow 1.7 /run shapes + nested supervisor envelopes."""
     def _unwrap(t: str) -> str:
-        """If the text is itself a JSON envelope, promote its message_to_user / result reply."""
+        """If the text itself looks like an envelope, walk it for the best human string —
+        never forward raw JSON to the browser."""
         s = t.strip()
         if not s.startswith("{"):
             return t
         try:
-            inner = json.loads(s)
+            node = json.loads(s)
         except Exception:
             return t
-        if not isinstance(inner, dict):
-            return t
-        cand = inner.get("message_to_user")
-        if isinstance(cand, str) and cand.strip():
-            return cand
-        res = inner.get("result") if isinstance(inner.get("result"), dict) else {}
-        for k in ("message_to_user", "reply", "answer", "research"):
-            v = res.get(k)
-            if isinstance(v, str) and v.strip():
-                return v
-        return t
+
+        def _find_best(node, depth=0):
+            if depth > 6 or not isinstance(node, dict):
+                return None
+            for key in ("message_to_user", "reply", "answer", "research", "next_question"):
+                v = node.get(key)
+                if isinstance(v, str) and v.strip() and not v.strip().startswith("{"):
+                    return v
+            for v in node.values():
+                r = _find_best(v, depth + 1)
+                if r:
+                    return r
+            return None
+
+        msg = _find_best(node)
+        return msg if msg else (
+            "Désolé, je n'ai pas pu produire une réponse précise. Pouvez-vous reformuler votre question ?"
+        )
 
     try:
         outputs = data.get("outputs", [])
@@ -266,6 +278,22 @@ def _extract_langflow_text(data: dict[str, Any]) -> Optional[str]:
 def _parse_langflow_response(data: dict[str, Any], source: str) -> dict[str, Any]:
     """Parse a Langflow-style /run response into the Evolve reply shape."""
     text = _extract_langflow_text(data) or data.get("output") or data.get("text") or data.get("message")
+    if isinstance(text, str) and text.strip().startswith("{"):
+        try:
+            envelope = json.loads(text.strip())
+            inner_mc = envelope.get("message_to_user") if isinstance(envelope, dict) else None
+            if isinstance(inner_mc, str) and inner_mc.strip() and not inner_mc.strip().startswith("{"):
+                text = inner_mc
+            elif isinstance(envelope, dict):
+                res_mc = (envelope.get("result") or {}).get("message_to_user") if isinstance(envelope.get("result"), dict) else None
+                if isinstance(res_mc, str) and res_mc.strip() and not res_mc.strip().startswith("{"):
+                    text = res_mc
+                else:
+                    res_reply = (envelope.get("result") or {}).get("reply") if isinstance(envelope.get("result"), dict) else None
+                    if isinstance(res_reply, str) and res_reply.strip():
+                        text = res_reply
+        except Exception:
+            pass
     if not text:
         raise ValueError("Réponse vide ou format non reconnu (pipeline).")
     return {"reply": text, "next_action": "await_user", "source": source, "langflow": True}
@@ -462,6 +490,52 @@ def download_cv(cv_id: str, current=Depends(get_current_user)):
         media_type=doc.get("contentType") or "application/octet-stream",
         headers={"Content-Disposition": f'attachment; filename="{doc.get("fileName", "cv")}"'},
     )
+
+
+@app.get("/api/career/cvs")
+def list_my_cvs(current=Depends(get_current_user)):
+    uid = current["sub"]
+    items = list(
+        db.cvs.find({"userId": uid}, {"fileBinary": 0, "parsedText": 0})
+        .sort("createdAt", -1)
+        .limit(20)
+    )
+    return {"cvs": [{
+        "id": str(d["_id"]),
+        "fileName": d.get("fileName"),
+        "chunksCount": d.get("chunksCount"),
+        "status": d.get("status"),
+        "createdAt": d.get("createdAt").isoformat() if d.get("createdAt") else None,
+        "language": d.get("language"),
+        "contentType": d.get("contentType"),
+    } for d in items]}
+
+
+@app.get("/api/settings")
+def get_settings(current=Depends(get_current_user)):
+    uid = current["sub"]
+    consents = {c["consentType"]: c.get("granted", False) for c in db.consents.find({"userId": uid})}
+    objective = db.career_objectives.find_one({"userId": uid}, {"_id": 0})
+    return {
+        "consents": consents,
+        "objective": objective,
+        "cvCount": db.cvs.count_documents({"userId": uid}),
+    }
+
+
+@app.post("/api/settings")
+def update_settings(body: SettingsIn, current=Depends(get_current_user)):
+    uid = current["sub"]
+    if body.consents:
+        allowed = {"longTermMemory", "cvAnalysis", "pdfReports", "weeklyEmail", "marketing"}
+        for k, v in body.consents.items():
+            if k not in allowed: continue
+            db.consents.update_one(
+                {"userId": uid, "consentType": k},
+                {"$set": {"userId": uid, "consentType": k, "granted": bool(v), "updatedAt": utcnow()}},
+                upsert=True,
+            )
+    return get_settings(current)
 
 
 @app.delete("/api/career/cv/{cv_id}")

@@ -101,3 +101,14 @@ export async function downloadGapPdf(): Promise<void> {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
+// ─── Career CVs (persistent state) ───
+export interface CvSummary { id: string; fileName: string; chunksCount: number; status: string; createdAt: string | null; language: string; contentType: string }
+export const listMyCvs = () =>
+  req<{ cvs: CvSummary[] }>('/api/career/cvs');
+
+// ─── Settings (consents + objective) ───
+export interface ObjectiveInfo { targetRole?: string; horizonMonths?: number; weeklyHours?: number; motivation?: string }
+export interface SettingsData { consents: Record<string, boolean>; objective: ObjectiveInfo | null; cvCount: number }
+export const getSettings = () => req<SettingsData>('/api/settings');
+export const updateSettings = (consents: Record<string, boolean>) =>
+  req<SettingsData>('/api/settings', { method: 'POST', body: JSON.stringify({ consents }) });

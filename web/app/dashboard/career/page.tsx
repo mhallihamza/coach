@@ -1,6 +1,6 @@
 'use client';
-import { useState } from 'react';
-import { uploadCv } from '@/lib/api';
+import { useState, useEffect } from 'react';
+import { uploadCv, listMyCvs } from '@/lib/api';
 
 type UploadState = 'idle' | 'uploading' | 'done' | 'error';
 
@@ -12,6 +12,21 @@ export default function CareerPage() {
   const [horizon, setHorizon] = useState('12');
   const [hours, setHours] = useState('5');
   const [saved, setSaved] = useState(false);
+
+  // Rehydrate persisted CV after navigation / refresh
+  useEffect(() => {
+    listMyCvs()
+      .then(({ cvs }) => {
+        const latest = cvs[0];
+        if (latest && latest.status === 'ready') {
+          setFileName(latest.fileName);
+          setUploadState('done');
+        }
+      })
+      .catch(() => {
+        /* silently ignore — UI stays in idle state */
+      });
+  }, []);
 
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];

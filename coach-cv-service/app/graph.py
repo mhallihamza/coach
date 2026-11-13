@@ -37,10 +37,55 @@ def parse_document(state: IngestState) -> IngestState:
 
 def clean_text(state: IngestState) -> IngestState:
     text = state["parsed_text"]
+    text = _fix_letterspacing(text)
     text = re.sub(r"\x00", " ", text)
     text = re.sub(r"[ \t]{2,}", " ", text)
     text = re.sub(r"\n{3,}", "\n\n", text)
     return {"clean_text": text.strip()}
+
+
+def _fix_letterspacing(text: str) -> str:
+    """
+    PDF extraction from letter-spaced layouts (e.g. LibreOffice display=letter-spacing)
+    emits one glyph per token ('E X P E R I E N C E'). Tokens-only joins would merge
+    everything, so we repair per LINE with a 60%-single-glyph rule:
+    - a line where ≥60% of tokens are 1-2 chars and no token exceeds length 4 is letter-spaced
+    - within such lines, we reconstruct word boundaries from separators (|, —, –, bullet, newline)
+      and digits (numbers are kept together)
+    """
+    out_lines = []
+    for line in text.splitlines():
+        tokens = line.split()
+        if len(tokens) < 4:
+            out_lines.append(line)
+            continue
+        short = sum(1 for t in tokens if len(t) <= 2)
+        if short / len(tokens) < 0.6:
+            out_lines.append(line)
+            continue
+        rebuilt: list[str] = []
+        buf = ""
+        for t in tokens:
+            if t in ("|", "•", "–", "—", "-",):
+                if buf:
+                    rebuilt.append(buf); buf = ""
+                rebuilt.append(" " + t + " ")
+                continue
+            if t.isdigit():
+                if buf:
+                    rebuilt.append(buf); buf = ""
+                rebuilt.append(t)
+                continue
+            if len(t) >= 3:
+                if buf:
+                    rebuilt.append(buf); buf = ""
+                rebuilt.append(t)
+            else:
+                buf += t
+        if buf:
+            rebuilt.append(buf)
+        out_lines.append(" ".join(s for s in rebuilt if s.strip()))
+    return "\n".join(out_lines)
 
 
 def chunk_text(state: IngestState) -> IngestState:
