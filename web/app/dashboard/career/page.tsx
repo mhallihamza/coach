@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { uploadCv, listMyCvs } from '@/lib/api';
+import { uploadCv, listMyCvs, setCareerObjective, getSettings } from '@/lib/api';
 
 type UploadState = 'idle' | 'uploading' | 'done' | 'error';
 
@@ -12,8 +12,10 @@ export default function CareerPage() {
   const [horizon, setHorizon] = useState('12');
   const [hours, setHours] = useState('5');
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
-  // Rehydrate persisted CV after navigation / refresh
+  // Rehydrate persisted CV + objective after navigation / refresh
   useEffect(() => {
     listMyCvs()
       .then(({ cvs }) => {
@@ -26,6 +28,15 @@ export default function CareerPage() {
       .catch(() => {
         /* silently ignore — UI stays in idle state */
       });
+    getSettings()
+      .then((d) => {
+        if (d.objective?.targetRole) {
+          setTargetRole(d.objective.targetRole);
+          setHorizon(String(d.objective.horizonMonths ?? 12));
+          setHours(String(d.objective.weeklyHours ?? 5));
+        }
+      })
+      .catch(() => { /* silent */ });
   }, []);
 
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
@@ -51,6 +62,19 @@ export default function CareerPage() {
 
   const dropClass = `cv-drop${uploadState === 'error' ? ' error' : ''}`;
   const canSave = targetRole.trim().length > 0 && uploadState !== 'uploading';
+
+  async function save() {
+    setSaving(true);
+    setSaveError(null);
+    try {
+      await setCareerObjective({ targetRole: targetRole.trim(), horizonMonths: parseInt(horizon, 10), weeklyHours: parseInt(hours, 10) });
+      setSaved(true);
+    } catch (e) {
+      setSaveError(e instanceof Error ? e.message : 'Échec de l’enregistrement');
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: '1rem' }}>
@@ -80,8 +104,9 @@ export default function CareerPage() {
             <select id="hours" value={hours} onChange={(e) => { setHours(e.target.value); setSaved(false); }}>{['2', '5', '8', '12', '20'].map(h => <option key={h} value={h}>{h} h</option>)}</select>
           </div>
         </div>
-        <button className="btn btn-primary btn-block" onClick={() => setSaved(true)} disabled={!canSave}>{uploadState === 'uploading' ? "Analyse du CV…" : "Enregistrer ma cible & préparer l’entretien"}</button>
-        {saved && <p style={{ fontSize: '.83rem', color: 'var(--pine)', marginTop: '.6rem', fontWeight: 600 }}>✓ Votre cible est enregistrée{uploadState === 'done' ? ' et votre CV analysé' : ''}. Le coach vous posera ses questions lors de la prochaine session.</p>}
+        <button className="btn btn-primary btn-block" onClick={save} disabled={!canSave || saving}>{saving ? 'Enregistrement…' : "Enregistrer ma cible & préparer l’entretien"}</button>
+        {saved && <p style={{ fontSize: '.83rem', color: 'var(--pine)', marginTop: '.6rem', fontWeight: 600 }}>✓ Votre cible est enregistrée{uploadState === 'done' ? ' et votre CV analysé' : ''}.</p>}
+        {saveError && <div className="form-error" style={{ marginTop: '.6rem' }}>{saveError}</div>}
       </section>
 
       <section className="panel">

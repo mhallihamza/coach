@@ -61,6 +61,13 @@ class SettingsIn(BaseModel):
     consents: Optional[dict[str, bool]] = None
 
 
+class ObjectiveIn(BaseModel):
+    targetRole: str = Field(min_length=2, max_length=200)
+    horizonMonths: int = Field(ge=1, le=60)
+    weeklyHours: int = Field(ge=1, le=80)
+    motivation: Optional[str] = Field(default="", max_length=1000)
+
+
 # ───────────────────────── Utilitaires ─────────────────────────
 
 def utcnow() -> datetime:
@@ -490,6 +497,21 @@ def download_cv(cv_id: str, current=Depends(get_current_user)):
         media_type=doc.get("contentType") or "application/octet-stream",
         headers={"Content-Disposition": f'attachment; filename="{doc.get("fileName", "cv")}"'},
     )
+
+
+@app.post("/api/career/objective", status_code=status.HTTP_201_CREATED)
+def set_career_objective(body: ObjectiveIn, current=Depends(get_current_user)):
+    uid = current["sub"]
+    doc = {
+        "userId": uid,
+        "targetRole": body.targetRole,
+        "horizonMonths": body.horizonMonths,
+        "weeklyHours": body.weeklyHours,
+        "motivation": body.motivation or "",
+        "updatedAt": utcnow(),
+    }
+    db.career_objectives.update_one({"userId": uid}, {"$set": doc}, upsert=True)
+    return {"ok": True, "objective": {"targetRole": doc["targetRole"], "horizonMonths": doc["horizonMonths"], "weeklyHours": doc["weeklyHours"], "motivation": doc["motivation"]}}
 
 
 @app.get("/api/career/cvs")

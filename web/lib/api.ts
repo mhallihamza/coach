@@ -62,7 +62,6 @@ export async function uploadCv(file: File, language = 'fr'): Promise<Record<stri
   return data as Record<string, unknown>;
 }
 
-
 // Rapport de développement (gap report → affiché dans /dashboard/rapport + PDF)
 export type GapReportItem = string | { text?: string; title?: string; label?: string; name?: string; gap?: string; strength?: string; limit?: string; skill?: string; evidence?: string; source?: string; excerpt?: string; quote?: string; [k: string]: unknown };
 
@@ -101,6 +100,7 @@ export async function downloadGapPdf(): Promise<void> {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
+
 // ─── Career CVs (persistent state) ───
 export interface CvSummary { id: string; fileName: string; chunksCount: number; status: string; createdAt: string | null; language: string; contentType: string }
 export const listMyCvs = () =>
@@ -112,3 +112,8 @@ export interface SettingsData { consents: Record<string, boolean>; objective: Ob
 export const getSettings = () => req<SettingsData>('/api/settings');
 export const updateSettings = (consents: Record<string, boolean>) =>
   req<SettingsData>('/api/settings', { method: 'POST', body: JSON.stringify({ consents }) });
+
+// ─── Career objective ───
+export interface ObjectiveBody { targetRole: string; horizonMonths: number; weeklyHours: number; motivation?: string }
+export const setCareerObjective = (obj: ObjectiveBody) =>
+  req<{ ok: boolean }>('/api/career/objective', { method: 'POST', body: JSON.stringify(obj) });
