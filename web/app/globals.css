@@ -392,3 +392,15 @@ footer.site { border-top: 1px solid var(--line); padding: 2.5rem 0 2rem; color: 
   .scale-btn { width: 44px; height: 50px; }
   .quiz-card { padding: 1.1rem 1rem; }
 }
+
+/* ───────── Landing dynamique (reveal on scroll) ───────── */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1); }
+.reveal.in-view { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+/* Bande photo — touche humaine */
+.photo-band { position: relative; min-height: 340px; display: flex; align-items: center; background-size: cover; background-position: center 28%; overflow: hidden; }
+.photo-band::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(7,26,18,.92) 0%, rgba(7,26,18,.72) 42%, rgba(7,26,18,.18) 100%); }
+.photo-band .container { padding: 4.2rem 0; }
+.photo-band h2 { color: #f6f3ec; font-size: clamp(1.9rem, 4vw, 3rem); line-height: 1.12; margin: .45rem 0 .8rem; }
+.photo-band p { color: rgba(246,243,236,.88); font-size: 1.02rem; line-height: 1.65; max-width: 46ch; }

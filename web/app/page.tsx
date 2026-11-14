@@ -1,3 +1,5 @@
+'use client';
+import { useEffect } from 'react';
 import Link from 'next/link';
 
 const testimonials = [
@@ -24,6 +26,21 @@ const faqs = [
 ];
 
 export default function Home() {
+  // Reveal on scroll — subtle, fast, disabled under prefers-reduced-motion
+  useEffect(() => {
+    const targets = document.querySelectorAll('.steps .step, .features .feature, .testimonials .quote, .pricing .plan, .section-head, .stats-band .stat, .faq details, .final-cta');
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          observer.unobserve(entry.target);
+        }
+      }
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    targets.forEach((el) => { el.classList.add('reveal'); observer.observe(el); });
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <>
       {/* ───────── Nav ───────── */}
@@ -211,6 +228,15 @@ export default function Home() {
               <p>{f.a}</p>
             </details>
           ))}
+        </div>
+      </section>
+
+      {/* ───────── Photo band — la méthode est humaine ───────── */}
+      <section className="photo-band" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=2000&q=80)' }} aria-label="Un vrai entretien, pas un chatbot">
+        <div className="container">
+          <span className="kicker" style={{ color: 'var(--champagne)' }}>Méthode humaine</span>
+          <h2 className="font-display">Un vrai entretien.<br />Pas un chatbot de plus.</h2>
+          <p>Pas de script figé : intention, parcours, forces, limites — validées avec vous, jamais décrétées sur la foi d’un modèle. Chaque conclusion cite vos propres réponses ou votre CV.</p>
         </div>
       </section>
 
