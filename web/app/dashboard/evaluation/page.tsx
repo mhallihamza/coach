@@ -218,6 +218,7 @@ export default function EvaluationPage() {
               <p style={{ color: 'var(--ink-soft)', lineHeight: 1.65, maxWidth: '58ch' }}>{result.recommended_focus}</p>
               <div style={{ display: 'flex', gap: '.6rem', marginTop: '.9rem', flexWrap: 'wrap' }}>
                 <Link href="/dashboard/rapport" className="btn btn-primary">Voir le rapport complet →</Link>
+                <Link href="/dashboard/plan" className="btn btn-primary">Générer mon plan 30/60/90 →</Link>
                 <button className="btn btn-ghost" onClick={() => downloadGapPdf().catch(() => {})}>↓ Télécharger PDF</button>
                 <Link href="/dashboard/chat" className="btn btn-ghost">Continuer avec le coach</Link>
               </div>

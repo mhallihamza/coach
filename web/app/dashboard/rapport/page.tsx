@@ -64,7 +64,7 @@ export default function RapportPage() {
           </>
         )}
         {!report?.has_report && (
-          <a className="btn btn-ghost btn-block" href="/dashboard/chat" style={{ marginTop: '1.2rem' }}>Commencer l’entretien →</a>
+          <a className="btn btn-ghost btn-block" href="/dashboard/plan" style={{ marginTop: '1.2rem' }}>Générer mon plan 30/60/90 →</a>
         )}
       </section>
     </div>

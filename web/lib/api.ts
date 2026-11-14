@@ -140,6 +140,18 @@ export const getEvaluationFollowups = (answers: EvaluationAnswer[], language = '
   req<{ followups: FollowupQuestion[]; note: string | null }>('/api/evaluation/followups', { method: 'POST', body: JSON.stringify({ answers, language }) });
 export const getEvaluationPrefill = () => req<{ hints: Record<string, string> }>('/api/evaluation/prefill');
 
+// ─── Plan 30/60/90 (draft → approbation explicite → goals) ───
+export interface PlanResource { title: string; url: string | null; type: string; why?: string }
+export interface PlanGoal { title: string; successMeasure: string; deadlineDays: number; priority: 'high' | 'medium' | 'low'; linkedGap?: string | null; phase?: string | null; milestones: string[]; resources: PlanResource[]; gap_evidence?: string }
+export interface PlanDraft {
+  draft: boolean; plan_title: string; targetRole?: string | null; horizonMonths: number; weeklyHours: number;
+  success_definition?: string; matchScore?: number | null; goals: PlanGoal[]; generatedAt: string; source: string;
+}
+export const getPlanDraft = () => req<PlanDraft>('/api/plan/draft', { method: 'POST' });
+export interface ApprovedPlanGoal { title: string; successMeasure: string; deadlineDays: number; priority: 'high' | 'medium' | 'low'; linkedGap?: string | null; phase?: string | null; milestones: string[] }
+export const approvePlan = (goals: ApprovedPlanGoal[]) =>
+  req<{ ok: boolean; created: { id: string; title: string; deadline: string }[] }>('/api/plan/approve', { method: 'POST', body: JSON.stringify({ goals }) });
+
 export const getSettings = () => req<SettingsData>('/api/settings');
 export const updateSettings = (consents: Record<string, boolean>, language?: string) =>
   req<SettingsData>('/api/settings', { method: 'POST', body: JSON.stringify({ consents, ...(language ? { language } : {}) }) });

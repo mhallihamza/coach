@@ -595,6 +595,10 @@ app.include_router(reports.router, prefix='/api')
 from . import evaluation  # noqa: E402
 
 app.include_router(evaluation.router, prefix='/api')
+# Plan 30/60/90 — draft reviewé par l'utilisateur AVANT création des goals
+from . import plan  # noqa: E402
+
+app.include_router(plan.router, prefix='/api')
 
 
 # ───────────────────────── Audio (STT Mistral → pipeline texte) ─────────────────────────
