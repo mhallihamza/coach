@@ -409,3 +409,13 @@ footer.site { border-top: 1px solid var(--line); padding: 2.5rem 0 2rem; color: 
 
 .spinner { width: 56px; height: 56px; border-radius: 50%; border: 5px solid rgba(20,23,21,.12); border-top-color: var(--pine); animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ───────── Chat « quiz » — sonde-card horizontale, pas feed ───────── */
+.probe-card { position: relative; align-self: stretch; max-width: 620px; background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--pine); border-radius: 16px; padding: .8rem .95rem; box-shadow: 0 10px 26px rgba(13,51,36,.07); animation: qIn .45s cubic-bezier(.2,.9,.3,1.15) both; transition: transform .35s ease, opacity .35s ease, border-color .35s; }
+.probe-card.probe-answered { transform: translateX(-46px); opacity: .38; border-left-color: var(--line); box-shadow: none; }
+.probe-head { display: flex; align-items: center; gap: .45rem; margin-bottom: .4rem; }
+.probe-num { font-family: 'Fraunces'; font-weight: 700; font-size: .72rem; color: #fdfcf7; background: var(--forest); border-radius: 8px; padding: .18rem .45rem; }
+.probe-kind { font-size: .66rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-soft); }
+.probe-body { font-size: .93rem; line-height: 1.58; color: var(--ink); white-space: pre-wrap; }
+.msg.user { max-width: 82%; align-self: flex-end; background: var(--forest); color: #f2efe6; border-bottom-right-radius: 4px; padding: .7rem .95rem; border-radius: 16px; font-size: .92rem; line-height: 1.55; white-space: pre-wrap; word-break: break-word; animation: qIn .3s both; }
+.suggestion-row { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .6rem; }
