@@ -135,6 +135,11 @@ export interface EvaluationResult {
 export const submitEvaluation = (answers: EvaluationAnswer[], language = 'fr') =>
   req<EvaluationResult>('/api/evaluation/complete', { method: 'POST', body: JSON.stringify({ answers, language }) });
 
+export interface FollowupQuestion { id: string; domain: string; kind: 'open' | 'mcq'; text: string; options?: string[] }
+export const getEvaluationFollowups = (answers: EvaluationAnswer[], language = 'fr') =>
+  req<{ followups: FollowupQuestion[]; note: string | null }>('/api/evaluation/followups', { method: 'POST', body: JSON.stringify({ answers, language }) });
+export const getEvaluationPrefill = () => req<{ hints: Record<string, string> }>('/api/evaluation/prefill');
+
 export const getSettings = () => req<SettingsData>('/api/settings');
 export const updateSettings = (consents: Record<string, boolean>, language?: string) =>
   req<SettingsData>('/api/settings', { method: 'POST', body: JSON.stringify({ consents, ...(language ? { language } : {}) }) });

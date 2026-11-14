@@ -1,8 +1,8 @@
 'use client';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import { getSettings, submitEvaluation, downloadGapPdf, type EvaluationResult, type EvaluationItem } from '@/lib/api';
-import { QUESTIONS, type Lang } from '@/lib/evaluation';
+import { getSettings, submitEvaluation, downloadGapPdf, getEvaluationFollowups, getEvaluationPrefill, type EvaluationResult, type EvaluationItem, type EvaluationAnswer, type FollowupQuestion } from '@/lib/api';
+import { QUESTIONS, type Lang, type Question } from '@/lib/evaluation';
 
 type Phase = 'intro' | 'quiz' | 'submitting' | 'done';
 
@@ -31,6 +31,9 @@ export default function EvaluationPage() {
   const [result, setResult] = useState<EvaluationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [ringP, setRingP] = useState(0);
+  const [followups, setFollowups] = useState<Question[] | null>(null);
+  const [loadingFollowups, setLoadingFollowups] = useState(false);
+  const [hints, setHints] = useState<Record<string, string>>({});
   const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -38,14 +41,17 @@ export default function EvaluationPage() {
       const l = (d.language as Lang) ?? 'fr';
       if (l === 'fr' || l === 'ar' || l === 'en') setLang(l);
     }).catch(() => {});
+    getEvaluationPrefill().then((d) => setHints(d.hints ?? {})).catch(() => {});
   }, []);
 
   useEffect(() => () => { if (advanceTimer.current) clearTimeout(advanceTimer.current); }, []);
 
-  const q = QUESTIONS[index];
-  const total = QUESTIONS.length;
+  const allQuestions = useMemo<Question[]>(() => followups ? [...QUESTIONS, ...followups] : QUESTIONS, [followups]);
+  const q = allQuestions[index];
+  const total = allQuestions.length;
   const isLast = index === total - 1;
   const t = COPY[lang];
+  const isPersonalized = !!q?.id?.startsWith('f_');
 
   useEffect(() => { setDraft(answers[q?.id] ?? ''); }, [index, q?.id, answers]);
 
@@ -83,11 +89,21 @@ export default function EvaluationPage() {
     if (!isLast) advance();
   }, [commitAnswer, advance, isLast]);
 
-  const submit = useCallback(async () => {
+  // Analyse live: generate personalized follow-ups from CV × objective × answers (hybrid model)
+  const mapFollowup = (f: FollowupQuestion): Question => ({
+    id: f.id,
+    domain: { fr: f.domain, ar: f.domain, en: f.domain },
+    kind: f.kind,
+    text: { fr: f.text, ar: f.text, en: f.text },
+    hint: { fr: "Personnalisée — d'après votre CV et votre objectif.", ar: 'سؤال مخصص — من سيرتك الذاتية وهدفك.', en: 'Personalized — from your CV and objective.' },
+    ...(f.options ? { options: f.options.map((o) => ({ fr: o, ar: o, en: o })) } : {}),
+  });
+
+  const submitEvaluationPayload = async (finalAnswers: Record<string, string>) => {
     setPhase('submitting');
     setError(null);
     try {
-      const payload = QUESTIONS.map((question) => ({ id: question.id, value: String(answers[question.id] ?? '').trim() }));
+      const payload = allQuestions.map((question) => ({ id: question.id, value: String(finalAnswers[question.id] ?? '').trim() }));
       const res = await submitEvaluation(payload, lang);
       setResult(res);
       setPhase('done');
@@ -95,27 +111,36 @@ export default function EvaluationPage() {
       setError(e instanceof Error ? e.message : 'Erreur réseau');
       setPhase('quiz');
     }
-  }, [answers, lang]);
+  };
+
+  const finishFlow = async () => {
+    if (followups !== null) { await submitEvaluationPayload(answers); return; }
+    setLoadingFollowups(true);
+    try {
+      const core = QUESTIONS.map((question) => ({ id: question.id, value: String(answers[question.id] ?? '').trim() }));
+      const res = await getEvaluationFollowups(core, lang);
+      const mapped = (res.followups ?? []).map(mapFollowup);
+      if (mapped.length > 0) {
+        setFollowups(mapped);
+        setSlide('in');
+        setIndex(QUESTIONS.length);
+        setLoadingFollowups(false);
+        return;
+      }
+      setFollowups([]);
+    } catch {
+      setFollowups([]);
+    } finally {
+      setLoadingFollowups(false);
+    }
+    await submitEvaluationPayload(answers);
+  };
 
   const finishFromOpen = () => {
     const v = draft.trim();
     if (v.length < 2) return;
     commitAnswer(q.id, v);
-    if (isLast) { setPhase('submitting'); void submitWith({ ...answers, [q.id]: v }); } else advance();
-  };
-
-  const submitWith = async (finalAnswers: Record<string, string>) => {
-    setPhase('submitting');
-    setError(null);
-    try {
-      const payload = QUESTIONS.map((question) => ({ id: question.id, value: String(finalAnswers[question.id] ?? '').trim() }));
-      const res = await submitEvaluation(payload, lang);
-      setResult(res);
-      setPhase('done');
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Erreur réseau');
-      setPhase('quiz');
-    }
+    if (isLast) { void submitEvaluationPayload({ ...answers, [q.id]: v }); } else advance();
   };
 
   const answeredCount = useMemo(() => Object.keys(answers).length, [answers]);
@@ -240,9 +265,15 @@ export default function EvaluationPage() {
         <div className="quiz-topbar">
           <span className="quiz-count">{index + 1}<span style={{ color: 'var(--ink-soft)' }}>/{total}</span></span>
           <span className="quiz-domain">{q.domain[lang]}</span>
+          {isPersonalized && <span className="quiz-domain" style={{ background: 'rgba(198,160,78,.16)', color: 'var(--gold-deep)', border: '1px solid rgba(198,160,78,.4)' }}>Personnalisé · CV</span>}
           <div className="quiz-progress" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}><i style={{ width: `${progress}%` }} /></div>
           <Link href="/dashboard" className="quiz-note" style={{ textDecoration: 'none', color: 'var(--ink-soft)' }}>✕</Link>
         </div>
+        {hints[q.id] && (
+          <div style={{ display: 'flex', gap: '.45rem', alignItems: 'center', fontSize: '.8rem', color: 'var(--pine)', background: 'rgba(23,92,61,.07)', border: '1px solid rgba(23,92,61,.18)', borderRadius: 12, padding: '.35rem .65rem', marginTop: '.2rem', lineHeight: 1.4 }}>
+            <span aria-hidden="true">📄</span><span>{hints[q.id]}</span>
+          </div>
+        )}
         <h2 className="quiz-question">{q.text[lang]}</h2>
         {q.hint && <p className="quiz-hint">{q.hint[lang]}</p>}
 
@@ -282,8 +313,12 @@ export default function EvaluationPage() {
         {error && <div className="form-error" style={{ marginTop: '.6rem' }}>{error}</div>}
         {q.kind !== 'open' && (
           <div className="quiz-foot">
-            <span className="quiz-note">{answeredCount}/{total} répondues{isLast ? ' · dernière question — touchez une réponse' : ''}</span>
-            {isLast && answers[q.id] && <button className="btn btn-primary" onClick={submit}>{t.finish} →</button>}
+            <span className="quiz-note">{answeredCount}/{total} répondues{isLast ? ' · dernière' : ''}</span>
+            {isLast && answers[q.id] && (
+              <button className="btn btn-primary" onClick={finishFlow} disabled={loadingFollowups}>
+                {loadingFollowups ? 'Analyse de votre CV…' : t.finish}
+              </button>
+            )}
           </div>
         )}
       </section>

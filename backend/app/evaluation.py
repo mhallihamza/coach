@@ -29,6 +29,15 @@ class CompleteIn(BaseModel):
     language: str = Field(default="fr", pattern="^(ar|fr|en)$")
 
 
+class FollowupIn(BaseModel):
+    answers: list[AnswerIn] = Field(default=[], max_length=24)
+    language: str = Field(default="fr", pattern="^(ar|fr|en)$")
+
+
+class PrefillOut(BaseModel):
+    hints: dict[str, str]
+
+
 # ───────── Composantes de score (somme des poids = 100) ─────────
 WEIGHTS = {
     "direction": 20,
@@ -233,6 +242,138 @@ def compute_report(answers: dict[str, str], cvs: list[dict], objective: Optional
         "answers": [{"id": k, "value": _esc(v, 400)} for k, v in sorted(answers.items())],
     }
     return {"score": score, "payload": payload, "components": {k: round(v * 100) for k, v in comps.items()}}
+
+
+# ───────── Hybridisation : noyau fixe + suivis DYNAMIQUES (CV/objectif/réponses) ─────────
+import json as _json
+import re as _re
+
+_DOMAINS = ("Direction", "Socle", "Forces", "Limites internes", "Limites externes", "Engagement", "Succès")
+_FID_RE = _re.compile(r"^f_[1-6]$")
+
+
+def _cv_excerpt(uid: str, limit: int = 1400) -> str:
+    chunks = list(db.cv_chunks.find({"userId": uid}, {"text": 1}).sort("seq", 1).limit(6))
+    joined = " ".join(c.get("text", "") for c in chunks)
+    if not joined:
+        cvs = list(db.cvs.find({"userId": uid}, {"fileName": 1, "summary": 1, "text": 1}).limit(1))
+        joined = str(cvs[0].get("summary") or cvs[0].get("text") or "")[:limit] if cvs else ""
+    return _esc(joined, limit)
+
+
+def _ask_llm(system: str, user: str, max_tokens: int = 900) -> Optional[str]:
+    """Appel one-shot via OpenRouter (même provider que les agents). Retourne le texte ou None."""
+    import httpx
+    key = None
+    for env_path in ("../langgraph/.env", ".env"):
+        try:
+            for line in open(env_path, encoding="utf-8"):
+                if line.startswith("OPENROUTER_API_KEY="):
+                    key = line.split("=", 1)[1].strip()
+        except Exception:
+            pass
+        if key:
+            break
+    if not key:
+        return None
+    try:
+        r = httpx.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+            json={"model": "deepseek/deepseek-chat", "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}], "max_tokens": max_tokens, "temperature": 0.3},
+            timeout=60,
+        )
+        if r.status_code != 200:
+            return None
+        return r.json()["choices"][0]["message"]["content"]
+    except Exception:
+        return None
+
+
+def _parse_followups(raw: str) -> list[dict]:
+    m = _re.search(r"\[.*\]", raw, _re.S)
+    if not m:
+        return []
+    try:
+        items = _json.loads(m.group(0))
+    except Exception:
+        return []
+    if not isinstance(items, list):
+        return []
+    out, seen = [], set()
+    for i, item in enumerate(items):
+        if not isinstance(item, dict):
+            continue
+        domain = str(item.get("domain", "")).strip()
+        kind = str(item.get("kind", "")).strip().lower()
+        text = _esc(item.get("text", ""), 300)
+        if domain not in _DOMAINS or kind not in ("open", "mcq") or len(text) < 12:
+            continue
+        if text.lower() in seen:
+            continue
+        seen.add(text.lower())
+        fid = f"f_{len(out) + 1}"
+        if kind == "mcq":
+            opts = item.get("options") or []
+            opts = [_esc(o, 200) for o in opts if str(o).strip()][:3]
+            if len(opts) != 3:
+                continue
+            out.append({"id": fid, "domain": domain, "kind": "mcq", "text": text, "options": opts})
+        else:
+            out.append({"id": fid, "domain": domain, "kind": "open", "text": text})
+        if len(out) >= 6:
+            break
+    return out
+
+
+@router.post("/evaluation/followups")
+def dynamic_followups(body: FollowupIn, current=Depends(get_current_user)):
+    """Génère 4-6 questions de suivi personnalisées (CV × objectif × réponses).
+    Jamais scorées — elles éclairent la profondeur, pas la note."""
+    uid = current["sub"]
+    excerpt = _cv_excerpt(uid)
+    objective = db.career_objectives.find_one({"userId": uid}, {"_id": 0})
+    cvs = list(db.cvs.find({"userId": uid}, {"fileName": 1}).sort("createdAt", -1).limit(1))
+    answers_summary = "; ".join(f"{a.id}={_esc(a.value, 90)}" for a in (body.answers or [])[:18])
+    lang_name = {"fr": "French", "ar": "Arabic", "en": "English"}.get(body.language, "French")
+    system = (
+        f"You are Evolve's question-writer for a coach. Produce 4 to 6 follow-up questions IN {lang_name.upper()}, "
+        "grounded ONLY in the provided CV excerpt / objective / answers — never invent companies, schools, or facts. "
+        "If the CV is absent or unusable, return []. "
+        "Domains allowed EXACTLY: Direction, Socle, Forces, Limites internes, Limites externes, Engagement, Succès. "
+        "Mix: at most 3 open questions, at least 1 MCQ with EXACTLY 3 options (A/B/C), at least 1 question that tests a fact FROM the CV or the objective. "
+        "Every question targets the USER's own material. NO clinical diagnosis, NO advice, NO scoring. "
+        "Output ONLY a raw JSON array, no markdown fence, no commentary: "
+        "[{\"domain\":\"...\", \"kind\":\"open|mcq\", \"text\":\"...\", \"options\":[\"...\",\"...\",\"...\"]}]"
+    )
+    user = (
+        f"CV excerpt: {excerpt or '(no CV on file)'}\n"
+        f"Objective: {objective or '(none set)'}\n"
+        f"CV file: {cvs[0].get('fileName') if cvs else '(none)'}\n"
+        f"Core answers so far: {answers_summary or '(none)'}\n\nJSON array:"
+    )
+    raw = _ask_llm(system, user, max_tokens=900)
+    if not raw:
+        return {"followups": [], "note": "générateur indisponible — évaluation de base suffisante"}
+    followups = _parse_followups(raw)
+    return {"followups": followups, "note": None if followups else "aucune question personnalisée pertinente — évaluation de base suffisante"}
+
+
+@router.get("/evaluation/prefill")
+def prefill_hints(current=Depends(get_current_user)):
+    """Détecte les faits CV qui répondent au noyau — proposés comme pré-remplissage, Jamais imposés."""
+    uid = current["sub"]
+    excerpt = _cv_excerpt(uid, limit=4000).lower()
+    hints: dict[str, str] = {}
+    if not excerpt:
+        return {"hints": hints}
+    school_keys = [k for k in ("fsjes", "licence", "master", "universit", "école", "ecole", "diploma") if k in excerpt]
+    exp_keys = [k for k in ("stage", "emploi", "cdi", "cdd", "intérim", "interim", "freelance", "alternance") if k in excerpt]
+    if school_keys:
+        hints["q4"] = f"Votre CV annonce une formation ({school_keys[0]}) — confirmez-vous ?"
+    if exp_keys:
+        hints["q6"] = f"Votre CV mentionne une expérience directe ({exp_keys[0]}) — confirmez-vous ?"
+    return {"hints": hints}
 
 
 @router.post("/evaluation/complete")
