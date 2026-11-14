@@ -591,6 +591,10 @@ def health():
 from . import reports  # noqa: E402
 
 app.include_router(reports.router, prefix='/api')
+# Quiz-style evaluation — deterministic engine, evidence = verbatim user answers
+from . import evaluation  # noqa: E402
+
+app.include_router(evaluation.router, prefix='/api')
 
 
 # ───────────────────────── Audio (STT Mistral → pipeline texte) ─────────────────────────

@@ -125,6 +125,16 @@ export async function sendAudioMessage(file: Blob, conversationId?: string, lang
 export interface ObjectiveInfo { targetRole?: string; horizonMonths?: number; weeklyHours?: number; motivation?: string }
 // Update: extend settings with language and audio message support
 export interface SettingsData { consents: Record<string, boolean>; objective: ObjectiveInfo | null; cvCount: number; language?: string }
+// ─── Quiz evaluation → rapport gap_reports ───
+export interface EvaluationAnswer { id: string; value: string }
+export interface EvaluationItem { text?: string; evidence?: string; priority?: string; skill?: string; type?: string; current_level?: number; required_level?: number; [k: string]: unknown }
+export interface EvaluationResult {
+  ok: boolean; id: string; matchScore: number; components: Record<string, number>;
+  strengths: EvaluationItem[]; gaps: EvaluationItem[]; limits: EvaluationItem[]; recommended_focus: string;
+}
+export const submitEvaluation = (answers: EvaluationAnswer[], language = 'fr') =>
+  req<EvaluationResult>('/api/evaluation/complete', { method: 'POST', body: JSON.stringify({ answers, language }) });
+
 export const getSettings = () => req<SettingsData>('/api/settings');
 export const updateSettings = (consents: Record<string, boolean>, language?: string) =>
   req<SettingsData>('/api/settings', { method: 'POST', body: JSON.stringify({ consents, ...(language ? { language } : {}) }) });

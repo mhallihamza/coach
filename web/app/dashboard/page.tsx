@@ -30,7 +30,7 @@ export default function Overview() {
 
       <div className="dash-grid">
         <section className="panel">
-          <div className="panel-head"><h2>Votre progression</h2><Link href="/dashboard/chat" className="btn btn-ghost" style={{ padding: '.35rem .9rem', fontSize: '.78rem' }}>Continuer l’entretien →</Link></div>
+          <div className="panel-head"><h2>Votre progression</h2><Link href="/dashboard/evaluation" className="btn btn-ghost" style={{ padding: '.35rem .9rem', fontSize: '.78rem' }}>Continuer l’entretien →</Link></div>
           {hasAnyData ? (
             <p style={{ fontSize: '.9rem', lineHeight: 1.65 }}>Votre progression reflète vos données réelles : chaque score est calculé depuis vos preuves citées, jamais estimé par le modèle. Revenez après votre prochain re-mesure mensuel pour voir l’évolution consignée ici.</p>
           ) : (
@@ -38,13 +38,13 @@ export default function Overview() {
               <strong style={{ display: 'block', fontSize: '1.02rem', color: 'var(--forest-deep)', marginBottom: '.4rem' }}>Pas encore de données</strong>
               <span style={{ fontSize: '.88rem', color: 'var(--ink-soft)', lineHeight: 1.6 }}>Votre progression apparaîtra ici après votre premier rapport — construit à partir de vos propres mots, jamais inventée.</span>
               <div style={{ marginTop: '.9rem' }}>
-                <Link href="/dashboard/chat" className="btn btn-primary" style={{ padding: '.55rem 1.3rem', fontSize: '.88rem' }}>Démarrer l’entretien →</Link>
+                <Link href="/dashboard/evaluation" className="btn btn-primary" style={{ padding: '.55rem 1.3rem', fontSize: '.88rem' }}>Démarrer l’entretien →</Link>
               </div>
             </div>
           )}
           <div style={{ marginTop: '1.1rem', display: 'grid', gap: '.5rem' }}>
             <span className="mini-label">Focus de la semaine</span>
-            <p style={{ fontSize: '.92rem', lineHeight: 1.6 }}>{goal ? <>Mettre le cap sur <strong>{goal.title}</strong> — mesure : {goal.successMeasure ?? 'à définir'}.</> : <>Définir votre prochaine cible — <Link href="/dashboard/chat" style={{ color: 'var(--pine)', fontWeight: 600, textDecoration: 'none' }}>lancez l’entretien</Link>, 15 questions, 4 minutes.</>}</p>
+            <p style={{ fontSize: '.92rem', lineHeight: 1.6 }}>{goal ? <>Mettre le cap sur <strong>{goal.title}</strong> — mesure : {goal.successMeasure ?? 'à définir'}.</> : <>Définir votre prochaine cible — <Link href="/dashboard/evaluation" style={{ color: 'var(--pine)', fontWeight: 600, textDecoration: 'none' }}>lancez l’entretien</Link>, 15 questions, 4 minutes.</>}</p>
           </div>
         </section>
 
@@ -68,9 +68,10 @@ export default function Overview() {
             <span style={{ color: 'var(--ink-soft)', fontSize: '.8rem' }}>{g.deadline ?? 'sans date'}</span>
           </div>
         )) : (
-          <p style={{ color: 'var(--ink-soft)', fontSize: '.9rem' }}>Aucun objectif encore — <Link href="/dashboard/chat" style={{ color: 'var(--pine)', fontWeight: 600 }}>démarrez l’entretien</Link> et laissez Evolve en proposer.</p>
+          <p style={{ color: 'var(--ink-soft)', fontSize: '.9rem' }}>Aucun objectif encore — <Link href="/dashboard/evaluation" style={{ color: 'var(--pine)', fontWeight: 600 }}>démarrez l’entretien</Link> et laissez Evolve en proposer.</p>
         )}
       </section>
     </>
   );
 }
+

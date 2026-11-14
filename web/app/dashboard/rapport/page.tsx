@@ -35,7 +35,7 @@ export default function RapportPage() {
   const motivation = report?.objective?.motivation;
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: '1rem' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
       {error && <div className="form-error" style={{ gridColumn: '1 / -1' }}>{error}</div>}
 
       <section className="panel">
