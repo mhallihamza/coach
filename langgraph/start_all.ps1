@@ -23,6 +23,22 @@ if ($mcp) {
   Start-Process -FilePath node -ArgumentList 'src/http.js' -WorkingDirectory "C:\Users\PC\Desktop\Coach\mcp-server" -WindowStyle Hidden | Out-Null
 }
 
+# start backend + CV service if not already running
+$be = Get-NetTCPConnection -LocalPort 8001 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty OwningProcess
+if ($be) {
+  Write-Host "backend already listening on 8001 (pid $be)" -ForegroundColor Green
+} else {
+  Write-Host "starting backend on 8001..."
+  Start-Process -FilePath py -ArgumentList '-m','uvicorn','app.main:app','--port','8001' -WorkingDirectory "C:\Users\PC\Desktop\Coach\backend" -WindowStyle Hidden | Out-Null
+}
+$cvs = Get-NetTCPConnection -LocalPort 8300 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty OwningProcess
+if ($cvs) {
+  Write-Host "CV service already listening on 8300 (pid $cvs)" -ForegroundColor Green
+} else {
+  Write-Host "starting CV service on 8300..."
+  Start-Process -FilePath py -ArgumentList '-m','uvicorn','app.main:app','--port','8300' -WorkingDirectory "C:\Users\PC\Desktop\Coach\coach-cv-service" -WindowStyle Hidden | Out-Null
+}
+
 # start one uvicorn per agent
 $agents = @(
   @{ n='self_discovery'; p=8501 },
@@ -43,7 +59,10 @@ $env:AGENT_SERVICE_NAME = 'supervisor'
 Start-Process -FilePath py -ArgumentList '-m','uvicorn','supervisor.main:app','--port','8020' -WorkingDirectory $root -WindowStyle Hidden | Out-Null
 Write-Host "  started supervisor           :8020"
 
-Start-Sleep -Seconds 6
+Start-Sleep -Seconds 8
+
+try { $r = Invoke-WebRequest -Uri 'http://127.0.0.1:8001/api/health' -UseBasicParsing -TimeoutSec 6; Write-Host "  8001 backend            OK $($r.StatusCode)" } catch { Write-Host "  8001 backend            FAILED" -ForegroundColor Red }
+try { $r = Invoke-WebRequest -Uri 'http://127.0.0.1:8300/health' -UseBasicParsing -TimeoutSec 6; Write-Host "  8300 CV service         OK $($r.StatusCode)" } catch { Write-Host "  8300 CV service         FAILED" -ForegroundColor Red }
 
 Write-Host ""
 Write-Host "Verifying agents + supervisor..." -ForegroundColor Cyan
