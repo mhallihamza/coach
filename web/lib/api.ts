@@ -42,7 +42,7 @@ export type DashboardData = {
 
 export const listGoals = () => req<{ goals: { id: string; title: string; status: string; deadline?: string | null; priority?: string; milestonesDone: number; milestonesTotal: number; successMeasure?: string }[] }>('/api/goals');
 
-export type ChatResponse = { conversationId: string; reply: string; next_action: string; source: string; langflow: boolean };
+export type ChatResponse = { conversationId: string; reply: string; next_action: string; source: string };
 export const sendChat = (message: string, conversationId?: string) =>
   req<ChatResponse>('/api/chat', { method: 'POST', body: JSON.stringify({ message, conversationId }) });
 
