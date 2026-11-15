@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Evolve AI — Premium Document</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23103b2a'/%3E%3Ctext x='32' y='46' font-size='34' text-anchor='middle' fill='%23c6a04e' font-family='Georgia,serif' font-weight='700'%3EE%3C/text%3E%3C/svg%3E">
+<style>
+@page { size: A4; margin: 0; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Segoe UI",system-ui,sans-serif;color:#141715;font-size:10.5pt;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{width:210mm;height:297mm;overflow:hidden;position:relative;page-break-after:always;background:#f6f3ec}
+.page:last-child{page-break-after:auto}
+.serif{font-family:Georgia,"Times New Roman",serif;letter-spacing:-.01em}
+h1,h2,.serif-b{font-family:Georgia,"Times New Roman",serif}
+.kicker{display:block;font-size:6.6pt;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#a8802f;margin-bottom:3.4mm}
+.accent{color:#175c3d;font-style:italic}
+.eyebrow{display:inline-flex;align-items:center;gap:2mm;font-size:6.4pt;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#175c3d;border:1px solid rgba(23,92,61,.35);border-radius:999px;padding:1.2mm 3mm;background:rgba(255,255,255,.55)}
+.eyebrow::before{content:"";width:1.6mm;height:1.6mm;border-radius:50%;background:#c2573b}
+
+/* ═════════ PAGE 1 — COVER ═════════ */
+.cover{background:linear-gradient(165deg,#0d3324 0%,#0b2a1f 60%,#071a12 100%);color:#f6f3ec;padding:0;display:flex;flex-direction:column}
+.cover-hero{position:absolute;right:0;top:0;bottom:0;width:46%;background:url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1600&q=80') center/cover;filter:saturate(.75) brightness(.85)}
+.cover-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#0b2a1f 0%,rgba(11,42,31,.75) 35%,rgba(11,42,31,.25) 100%)}
+.cover-inner{position:relative;z-index:1;padding:16mm 12mm 10mm 16mm;display:flex;flex-direction:column;height:100%;max-width:58%}
+.logo-row{display:flex;align-items:center;gap:4mm;margin-bottom:14mm}
+.mark{width:17mm;height:17mm;border-radius:4.5mm;display:grid;place-items:center;background:linear-gradient(150deg,#175c3d,#103b2a);color:#c6a04e;font-size:24pt;font-weight:700;box-shadow:inset 0 1mm 0 rgba(255,255,255,.25),0 3mm 8mm rgba(0,0,0,.45)}
+.logo-word{font-size:16pt;font-weight:600;color:#f6f3ec;letter-spacing:-.01em}.logo-word em{color:#c6a04e}
+.logo-tag{font-size:5.6pt;letter-spacing:.2em;text-transform:uppercase;color:rgba(246,243,236,.55);font-weight:600;margin-top:.6mm}
+.cover h1{font-size:38pt;line-height:1.04;font-weight:600;color:#f6f3ec;margin:0 0 6mm}
+.warm{color:#e8d5a4}
+.lead{font-size:10pt;line-height:1.65;color:rgba(246,243,236,.82);max-width:92mm}
+.chips{display:flex;gap:2mm;flex-wrap:wrap;margin-top:7mm}
+.chip{font-size:6.3pt;font-weight:600;border-radius:999px;padding:1.3mm 3mm;white-space:nowrap}
+.chip-green{color:#0b2a1f;background:#e8d5a4}
+.chip-outline{color:#e8d5a4;border:1px solid rgba(232,213,164,.45)}
+.cover-foot{margin-top:auto;border-top:1px solid rgba(246,243,236,.15);padding-top:4mm;display:flex;justify-content:space-between;font-size:5.9pt;letter-spacing:.14em;text-transform:uppercase;color:rgba(246,243,236,.5)}
+.cover-foot b{color:#e8d5a4}
+
+/* ═════════ PAGE 2 — LE PROBLÈME + LA BOUCLE ═════════ */
+.p2{padding:11mm 12mm}
+.head-band{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2.6pt solid #c6a04e;padding-bottom:2mm;margin-bottom:5mm}
+.head-band span{font-size:6.4pt;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#175c3d}
+.head-band b{font-size:8pt;color:#a8802f;font-family:Georgia,serif}
+h2{font-size:21pt;line-height:1.12;color:#0b2a1f;font-weight:600;margin:0 0 3mm}
+.problems{display:grid;grid-template-columns:1fr 1fr;gap:3.5mm;margin:4mm 0 6mm}
+.prob{background:#fff;border:1px solid rgba(20,23,21,.1);border-left:1.2mm solid #c2573b;border-radius:4mm;padding:4mm}
+.prob h3{font-size:9pt;color:#103b2a;margin-bottom:1.5mm}
+.prob p{font-size:8.5pt;color:rgba(20,23,21,.62);line-height:1.5}
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:2mm;margin:3mm 0 5mm}
+.step{background:#103b2a;color:#f6f3ec;border-radius:3mm;padding:3mm 2.2mm;text-align:center}
+.step b{font-size:13pt;color:#c6a04e;display:block}
+.step h3{font-size:7.2pt;margin:1.2mm 0 .8mm;color:#fdfcf7}
+.step p{font-size:5.8pt;line-height:1.45;color:rgba(246,243,236,.75)}
+.note{border-left:1mm solid #c6a04e;background:#fffdf8;border-radius:0 3mm 3mm 0;padding:3mm 4mm;font-size:8.6pt;color:#3a3a3a;line-height:1.55;margin-top:3mm}
+.note b{color:#103b2a}
+.diagram{background:#fff;border:1px solid rgba(20,23,21,.1);border-radius:4mm;padding:4mm;margin-top:4mm}
+
+/* ═════════ PAGE 3 — LE PRODUIT ═════════ */
+.p3{padding:11mm 12mm;background:linear-gradient(180deg,#f6f3ec,#efecdf 100%)}
+.screens-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3mm;margin-top:4mm}
+.scr{background:#0d3324;border-radius:4mm;padding:1.6mm;box-shadow:0 4mm 10mm rgba(8,31,20,.18)}
+.scr-bar{display:flex;gap:1.1mm;margin-bottom:1.6mm;justify-content:center}
+.scr-bar i{width:9mm;height:1.1mm;border-radius:1mm;background:rgba(255,255,255,.28)}
+.scr-inner{background:#f6f3ec;border-radius:2.6mm;padding:2.4mm 2.2mm;min-height:38mm}
+.scr h4{color:#f6f3ec;font-size:6.6pt;text-align:center;margin-bottom:1.4mm;font-family:Georgia,serif}
+.row{display:flex;align-items:center;gap:1.6mm;background:#fff;border:1px solid rgba(20,23,21,.08);border-radius:2mm;padding:1.2mm 1.5mm;font-size:5.7pt;color:#5a5f5a;margin-bottom:1.1mm}
+.row strong{color:#103b2a}
+.ring{width:12mm;height:12mm;border-radius:50%;background:conic-gradient(#c6a04e 0 59%,#e0ddd0 0);display:grid;place-items:center;margin:1mm auto;font-size:7pt;font-weight:700;color:#103b2a;font-family:Georgia,serif}
+.bar{height:1.6mm;background:#e0ddd0;border-radius:1mm;overflow:hidden;margin:1.5mm 0}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#175c3d,#c6a04e)}
+.btn{display:block;background:#103b2a;color:#fdfcf7;border-radius:999px;text-align:center;font-size:5.9pt;padding:1.2mm 0;margin:1.2mm .6mm}
+.dot{width:1.6mm;height:1.6mm;border-radius:50%;background:#175c3d;flex-shrink:0}
+.principles{display:grid;grid-template-columns:repeat(3,1fr);gap:2.5mm;margin-top:5mm}
+.prin{background:#fffdf8;border:1px solid rgba(20,23,21,.1);border-radius:3mm;padding:3mm}
+.prin span{font-size:6.2pt;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#a8802f}
+.prin h3{font-size:8.4pt;color:#103b2a;margin:1mm 0}
+.prin p{font-size:6.8pt;color:rgba(20,23,21,.65);line-height:1.5}
+
+/* ═════════ PAGE 4 — ARCHITECTURE ═════════ */
+.p4{padding:11mm 12mm}
+.arch-card{background:#0d3324;border-radius:4mm;padding:4.5mm;margin-top:3mm;color:#f6f3ec}
+.arch-card .kicker{color:#c6a04e}
+table{width:100%;border-collapse:collapse;font-size:7.6pt;margin-top:4mm}
+th,td{padding:1.8mm 2mm;border-bottom:1px solid rgba(20,23,21,.1);text-align:left}
+th{font-size:6.2pt;letter-spacing:.13em;text-transform:uppercase;color:#a8802f;background:#fffdf8;font-family:Georgia,serif}
+tr:nth-child(even) td{background:#fffdf8}
+code{font-family:ui-monospace,Consolas,monospace;font-size:6.5pt;background:#efecdf;border:1px solid rgba(20,23,21,.12);border-radius:1.2mm;padding:.2mm 1.2mm}
+.p4 h2{margin-bottom:1mm}
+
+/* ═════════ PAGE 5 — SÉCU + FAQ + CTA ═════════ */
+.p5{display:flex;flex-direction:column;padding:10mm 12mm;background:#f6f3ec}
+.safety{background:#0d3324;color:#f6f3ec;border-radius:4mm;padding:4mm 5mm;margin:4mm 0}
+.safety h3{color:#e8d5a4;font-size:10pt;margin-bottom:2mm;font-family:Georgia,serif}
+.safety li{font-size:7.4pt;line-height:1.65;color:rgba(246,243,236,.88)}
+.safety ul{margin-left:5mm}
+.faq{display:grid;grid-template-columns:1fr 1fr;gap:2mm;margin-top:3mm}
+.qa{background:#fff;border:1px solid rgba(20,23,21,.1);border-radius:2.5mm;padding:2.6mm}
+.qa b{font-size:7.4pt;color:#103b2a}
+.qa p{font-size:6.6pt;color:rgba(20,23,21,.65);line-height:1.5;margin-top:1mm}
+.cta{margin-top:auto;position:relative;border-radius:4mm;overflow:hidden;min-height:42mm;display:flex;align-items:center;padding:6mm;background:url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1600&q=80') center/cover}
+.cta::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#0b2a1f 0%,rgba(11,42,31,.78) 45%,rgba(11,42,31,.1) 100%)}
+.cta-inner{position:relative;color:#f6f3ec;max-width:105mm}
+.cta-inner h3{font-size:15pt;line-height:1.18;color:#f6f3ec;font-family:Georgia,serif;font-weight:600;margin:0 0 2mm}
+.cta-inner p{font-size:8pt;color:rgba(246,243,236,.85);line-height:1.5}
+.cta-btn{display:inline-block;background:#e8d5a4;color:#2b2110;font-weight:800;font-size:8.3pt;border-radius:999px;padding:2.1mm 5.5mm;margin-top:3mm}
+.foot{display:flex;justify-content:space-between;border-top:1px solid rgba(20,23,21,.15);margin-top:4mm;padding-top:2mm;font-size:5.8pt;letter-spacing:.14em;text-transform:uppercase;color:#a8802f}
+</style>
+</head>
+<body>
+
+<!-- ══════════ PAGE 1 — COVER ══════════ -->
+<section class="page cover">
+  <div class="cover-hero"></div>
+  <div class="cover-inner">
+    <div class="logo-row">
+      <div class="mark">E</div>
+      <div><div class="logo-word">Evolve<em>.</em></div><div class="logo-tag">Coach personnel · IA</div></div>
+    </div>
+    <span class="eyebrow" style="color:#e8d5a4;border-color:rgba(232,213,164,.35);background:rgba(232,213,164,.07)">Coach · FR / AR / EN</span>
+    <h1>Le coach qui<br>vous <span class="warm">comprend</span><br>avant de vous<br>conseiller.</h1>
+    <p class="lead">Evolve lit votre CV, vous interroge face à face, vous montre vos angles morts — puis construit avec vous un plan 30/60/90 jours. Mesuré. Suivi. Preuves obligatoires.</p>
+    <div class="chips">
+      <span class="chip chip-green">Preuve ou silence</span>
+      <span class="chip chip-outline">Zéro diagnostic</span>
+      <span class="chip chip-outline">Approbation utilisateur</span>
+    </div>
+    <div class="cover-foot"><span><b>Evolve AI</b> · Novembre 2026</span><span>Confidentiel équipe</span></div>
+  </div>
+</section>
+
+<!-- ══════════ PAGE 2 — LE PROBLÈME + LA BOUCLE ══════════ -->
+<section class="page p2">
+  <div class="head-band"><span>Evolve AI — Document</span><b>02 · Le problème &amp; la boucle</b></div>
+  <h2>Deux murs,<br>un seul coach.</h2>
+  <p style="font-size:9.5pt;color:rgba(20,23,21,.7);max-width:170mm;line-height:1.55">L’ambition paralysée arrive toujours aux mêmes deux endroits : le cap flou, et la politesse qui n’ose rien. Evolve est conçu pour ces deux murs.</p>
+
+  <div class="problems">
+    <div class="prob"><h3>Mur n°1 — Le cap flou</h3><p>« Je veux réussir » n’est pas une direction. Des objectifs vagues produisent des efforts vagues — personne ne mesure, personne n’avance.</p></div>
+    <div class="prob"><h3>Mur n°2 — La politesse qui tue</h3><p>Amis, managers, assistants « IA » : tout le monde reste correct. Personne ne nomme vos peurs, votre perfectionnisme, votre manque de temps. Résultat : zéro vérité — zéro progrès.</p></div>
+  </div>
+
+  <div class="steps">
+    <div class="step"><b>01</b><h3>Compte</h3><p>Inscription obligatoire. CV optionnel. Objectif : cible · horizon · heures/sem</p></div>
+    <div class="step"><b>02</b><h3>Évaluation</h3><p>18 questions mixtes · ~4 min · personnalisées depuis CV × objectif × réponses</p></div>
+    <div class="step"><b>03</b><h3>Rapport</h3><p>Score /100 · forces · gaps · limites internes &amp; externes · citations</p></div>
+    <div class="step"><b>04</b><h3>Plan</h3><p>30/60/90 j · 1 goal SMART par gap · jalons hebdo · vous approuvez tout</p></div>
+    <div class="step"><b>05</b><h3>Suivi</h3><p>Re-mesure mensuelle · détection patterns · adaptation du plan</p></div>
+  </div>
+
+  <div class="diagram">
+    <svg viewBox="0 0 780 165" role="img" aria-label="Boucle Evolve: compte → CV+objectif → évaluation → rapport → plan → suivi">
+      <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#175c3d"/></marker></defs>
+      <g font-family="Segoe UI, sans-serif" font-size="12" fill="#0b2a1f">
+        <rect x="2" y="18" width="140" height="54" rx="11" fill="#fffdf8" stroke="#175c3d" stroke-width="1.6"/><text x="72" y="41" text-anchor="middle" font-weight="700">Compte</text><text x="72" y="58" text-anchor="middle" font-size="9.5" fill="#5a5f5a">obligatoire</text>
+        <line x1="142" y1="45" x2="176" y2="45" stroke="#175c3d" stroke-width="2.2" marker-end="url(#ar)"/>
+        <rect x="178" y="18" width="142" height="54" rx="11" fill="#fffdf8" stroke="#175c3d" stroke-width="1.6"/><text x="249" y="41" text-anchor="middle" font-weight="700">CV + objectif</text><text x="249" y="58" text-anchor="middle" font-size="9.5" fill="#a8802f">optionnels mais puissants</text>
+        <line x1="320" y1="45" x2="354" y2="45" stroke="#175c3d" stroke-width="2.2" marker-end="url(#ar)"/>
+        <rect x="356" y="18" width="142" height="54" rx="11" fill="#fffdf8" stroke="#c6a04e" stroke-width="2.4"/><text x="427" y="41" text-anchor="middle" font-weight="700">Évaluation</text><text x="427" y="58" text-anchor="middle" font-size="9.5" fill="#a8802f">18 Q · 4 min</text>
+        <line x1="498" y1="45" x2="532" y2="45" stroke="#175c3d" stroke-width="2.2" marker-end="url(#ar)"/>
+        <rect x="534" y="18" width="142" height="54" rx="11" fill="#fffdf8" stroke="#175c3d" stroke-width="1.6"/><text x="605" y="41" text-anchor="middle" font-weight="700">Rapport</text><text x="605" y="58" text-anchor="middle" font-size="9.5" fill="#5a5f5a">preuves ou silence</text>
+        <line x1="676" y1="45" x2="706" y2="45" stroke="#175c3d" stroke-width="2.2" marker-end="url(#ar)"/>
+        <rect x="708" y="12" width="66" height="66" rx="12" fill="#c6a04e"/><text x="741" y="40" text-anchor="middle" font-weight="800" fill="#2b2110" font-size="13">Plan</text><text x="741" y="57" text-anchor="middle" font-size="9" fill="#2b2110">30·60·90</text>
+        <path d="M 750 78 C 750 130, 427 145, 427 92" fill="none" stroke="#c2573b" stroke-width="2.2" stroke-dasharray="5 5" marker-end="url(#ar)"/>
+        <text x="590" y="138" text-anchor="middle" font-size="10.5" fill="#c2573b" font-weight="800">suivi mensuel + ré-évaluation</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="note"><b>La promesse, au mot près :</b> chaque affirmation cite vos réponses verbatim ou votre CV. Pas de preuve → la phrase disparaît. Pas de diagnostic, pas d’étiquette, jamais.</div>
+</section>
+
+<!-- ══════════ PAGE 3 — LE PRODUIT EN ÉCRANS ══════════ -->
+<section class="page p3">
+  <div class="head-band"><span>Evolve AI — Document</span><b>03 · Le produit en écrans</b></div>
+  <h2>Ce qu’on voit,<br>ce qu’on touche.</h2>
+
+  <div class="screens-grid">
+    <div class="scr"><div class="scr-bar"><i></i></div><h4>1 · Tableau de bord</h4><div class="scr-inner">
+      <div class="row"><span class="dot"></span><span><strong>Readiness</strong> · 59/100</span></div>
+      <div class="row"><span class="dot"></span><span>Objectifs actifs · <strong>3</strong></span></div>
+      <div class="row"><span class="dot"></span><span>Constance habitudes · <strong>78%</strong></span></div>
+      <div class="row"><span class="dot" style="background:#c2573b"></span><span>Gap · surcharge — 8/10</span></div>
+      <div class="btn">Continuer l’évaluation →</div>
+    </div></div>
+
+    <div class="scr"><div class="scr-bar"><i></i></div><h4>2 · Évaluation Evolve</h4><div class="scr-inner">
+      <div style="display:flex;justify-content:space-between;font-size:5.5pt;color:#5a5f5a;margin-bottom:1mm"><span><strong>7/18</strong></span><span style="color:#175c3d;font-weight:800">DIRECTION</span></div>
+      <div class="bar"><i style="width:39%"></i></div>
+      <div class="row" style="border-left:1mm solid #c6a04e">« En une phrase — ce que tu veux vraiment accomplir »</div>
+      <div class="row">Réponse : devenir data analyst solo…</div>
+      <div style="display:flex;gap:1mm"><button class="btn" style="flex:1;margin:0">A</button><button class="btn" style="flex:1;margin:0">B</button><button class="btn" style="flex:1;margin:0">C</button></div>
+    </div></div>
+
+    <div class="scr"><div class="scr-bar"><i></i></div><h4>3 · Résultat</h4><div class="scr-inner">
+      <div class="ring">59</div>
+      <div class="row" style="justify-content:center;color:#175c3d;font-weight:800;font-size:5.4pt">EN PROGRESSION</div>
+      <div class="row"><span class="dot"></span><span>Clarté du cap · 7/10 ✓</span></div>
+      <div class="row"><span class="dot" style="background:#c2573b"></span><span>Perfectionnisme · 8/10 ✗</span></div>
+      <div class="row" style="border-left:1mm solid #c2573b">Limite : surcharge — citée</div>
+    </div></div>
+
+    <div class="scr"><div class="scr-bar"><i></i></div><h4>4 · Mon plan 30/60/90</h4><div class="scr-inner">
+      <div class="row" style="border-left:1mm solid #175c3d"><span><strong>Réduire la surcharge</strong> · 30 j</span></div>
+      <div style="font-size:5.2pt;color:#5a5f5a;margin:.5mm 0 1.2mm 1mm;line-height:1.5">S1 · diagnostic · 3h<br>S2 · 1er livrable « bon »<br>S4 · bilan mesuré 1–10</div>
+      <div class="row">Ressources : Coursera — LHTL ✓</div>
+      <div class="btn">Créer mon plan (1 objectif)</div>
+    </div></div>
+
+    <div class="scr"><div class="scr-bar"><i></i></div><h4>5 · Mon rapport</h4><div class="scr-inner">
+      <div class="ring">59</div>
+      <div class="row" style="justify-content:center;color:#5a5f5a;font-size:5.2pt">READINESS SCORE · citations</div>
+      <div class="row">Cible : Analyste financier · 12 mois · 5h/sem</div>
+      <div class="row" style="border-left:1mm solid #175c3d">+ Forces : cap direction</div>
+      <div class="row" style="border-left:1mm solid #c2573b">− Gap : régulation citée</div>
+    </div></div>
+
+    <div class="scr"><div class="scr-bar"><i></i></div><h4>6 · Coach (chat)</h4><div class="scr-inner">
+      <div style="font-size:5.6pt;color:#5a5f5a;margin-bottom:.8mm"><span style="background:#103b2a;color:#f6f3ec;border-radius:1.2mm;padding:.3mm 1.2mm;font-weight:700">Q2</span> À CHOIX</div>
+      <div class="row" style="border-left:1mm solid #175c3d">« Pourquoi ce métier, pourquoi maintenant ? »</div>
+      <div style="display:flex;gap:1mm"><button class="btn" style="flex:1;margin:0">A</button><button class="btn" style="flex:1;margin:0">B</button><button class="btn" style="flex:1;margin:0">C</button></div>
+      <div class="row" style="margin-top:1mm">🎙️ dictée optionnelle · FR / AR / EN</div>
+    </div></div>
+  </div>
+
+  <div class="principles">
+    <div class="prin"><span>01</span><h3>Preuve ou silence</h3><p>Chaque affirmation cite vos réponses verbatim ou votre CV. Sans citation — la phrase n’existe pas.</p></div>
+    <div class="prin"><span>02</span><h3>Zéro diagnostic</h3><p>Pas de psychiatrie, pas d’étiquettes. Vous recevez des hypothèses avec preuves — jamais des verdicts.</p></div>
+    <div class="prin"><span>03</span><h3>Approbation avant sauvegarde</h3><p>Un objectif ou un plan n’existe que si vous pressez « Créer mon plan ». Le rapport est une mesure — pas un engagement.</p></div>
+  </div>
+</section>
+
+<!-- ══════════ PAGE 4 — ARCHITECTURE ══════════ -->
+<section class="page p4">
+  <div class="head-band"><span>Evolve AI — Document</span><b>04 · Architecture (LangGraph)</b></div>
+  <h2>Agentique.<br>Locale-first.</h2>
+
+  <div class="arch-card">
+    <svg viewBox="0 0 750 195" role="img" aria-label="Web :3000 → FastAPI :8001 → Supervisor :8020 + spécialistes :8501-8507 → MCP :8310 → Mongo Atlas">
+      <g font-family="Segoe UI, sans-serif" font-size="10.5" fill="#f6f3ec">
+        <rect x="225" y="4" width="300" height="34" rx="10" fill="#103b2a" stroke="#c6a04e" stroke-width="1.6"/>
+        <text x="375" y="18" text-anchor="middle" font-weight="800" font-size="11.5">Web · Next.js · :3000</text>
+        <text x="375" y="31" text-anchor="middle" font-size="8" fill="#c6a04e">FR · AR · EN — streaming SSE ready</text>
+        <line x1="375" y1="38" x2="375" y2="54" stroke="#c6a04e" stroke-width="2.2"/>
+        <rect x="200" y="56" width="350" height="38" rx="10" fill="#0b2a1f" stroke="#175c3d" stroke-width="1.7"/>
+        <text x="375" y="73" text-anchor="middle" font-weight="800" font-size="12">Backend FastAPI · :8001</text>
+        <text x="375" y="86" text-anchor="middle" font-size="8.5" fill="rgba(246,243,236,.7)">auth JWT HS256 · /api/auth · chat · evaluation · plan · reports</text>
+        <line x1="375" y1="94" x2="330" y2="112" stroke="#c6a04e" stroke-width="2.2"/><line x1="375" y1="94" x2="455" y2="112" stroke="#c6a04e" stroke-width="2.2"/>
+        <rect x="110" y="112" width="230" height="34" rx="10" fill="#103b2a" stroke="#c6a04e" stroke-width="1.6"/>
+        <text x="225" y="127" text-anchor="middle" font-weight="800" font-size="11">LangGraph supervisor · :8020</text>
+        <text x="225" y="139" text-anchor="middle" font-size="8.3" fill="#c6a04e">route → spécialiste → quality_gate</text>
+        <rect x="370" y="112" width="230" height="34" rx="10" fill="#0b2a1f" stroke="#175c3d" stroke-width="1.7"/>
+        <text x="485" y="127" text-anchor="middle" font-weight="800" font-size="11">CV service · :8300</text>
+        <text x="485" y="139" text-anchor="middle" font-size="8.3" fill="rgba(246,243,236,.7)">parse → chunk → $text search</text>
+        <line x1="225" y1="146" x2="120" y2="158" stroke="#c6a04e" stroke-width="1.8"/><line x1="225" y1="146" x2="330" y2="158" stroke="#c6a04e" stroke-width="1.8"/><line x1="375" y1="146" x2="530" y2="158" stroke="#c6a04e" stroke-width="1.8"/>
+        <rect x="30" y="160" width="150" height="28" rx="8" fill="#0b2a1f" stroke="rgba(198,160,78,.4)"/><text x="105" y="178" text-anchor="middle" font-size="9.6" font-weight="700">Agents :8501–8507</text>
+        <rect x="205" y="160" width="150" height="28" rx="8" fill="#0b2a1f" stroke="rgba(198,160,78,.4)"/><text x="280" y="178" text-anchor="middle" font-size="9.6" font-weight="700">MCP · :8310 (45 outils)</text>
+        <rect x="380" y="160" width="330" height="28" rx="8" fill="#0b2a1f" stroke="rgba(198,160,78,.4)"/><text x="545" y="178" text-anchor="middle" font-size="9.6" font-weight="700" fill="#c6a04e">MongoDB Atlas — db « coach »</text>
+      </g>
+    </svg>
+  </div>
+
+  <table>
+    <thead><tr><th>Composant</th><th>Port</th><th>Rôle</th></tr></thead>
+    <tbody>
+      <tr><td>Web — Next.js (App Router)</td><td><code>3000</code></td><td>UI premium · FR/AR/EN · design system custom</td></tr>
+      <tr><td>Backend — FastAPI</td><td><code>8001</code></td><td>REST · auth JWT · évaluation · plan · rapports · PDF</td></tr>
+      <tr><td>Supervisor LangGraph</td><td><code>8020</code></td><td>Route → spécialiste → quality_gate → synthèse coach</td></tr>
+      <tr><td>7 spécialistes (agents)</td><td><code>8501–8507</code></td><td>Self_Discovery · Skills · Dev_Planner · Progress · CV_Gap · Quality_Gate · Knowledge_RAG</td></tr>
+      <tr><td>MCP server</td><td><code>8310</code></td><td>Outils des agents · Mongo Atlas · $text</td></tr>
+      <tr><td>CV service</td><td><code>8300</code></td><td>Pipeline CV : parse → clean → chunk</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note" style="margin-top:4mm"><b>Supervision, pas improvisation :</b> chaque tour suit le même chemin — langue détectée → supervisor route un spécialiste → quality_gate vérifie l’ancrage de chaque affirmation → synthèse en voix de coach. Aucun LLM ne décide seul du tout.</div>
+</section>
+
+<!-- ══════════ PAGE 5 — SÉCURITÉ + FAQ + CTA ══════════ -->
+<section class="page p5">
+  <div class="head-band"><span>Evolve AI — Document</span><b>05 · Sécurité &amp; confiance</b></div>
+
+  <div class="safety">
+    <h3>Ce qu’on s’interdit, par écrit</h3>
+    <ul>
+      <li>Clés, mots de passe, URIs Mongo vivent dans des <code style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);color:#e8d5a4">.env</code> — jamais dans le dépôt, jamais dans ce document.</li>
+      <li>Données cloisonnées par <code style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);color:#e8d5a4">userId</code> sur toute la chaîne : Mongo, CV, chat, rapports.</li>
+      <li>Consentements granulaires (mémoire · CV · PDF) + suppression complète en un clic.</li>
+      <li>Textes récupérés = données, jamais des instructions — anti prompt-injection.</li>
+      <li>Toute détresse sévère → arrêt immédiat + orientation vers un professionnel. Non négociable.</li>
+    </ul>
+  </div>
+
+  <div class="faq">
+    <div class="qa"><b>Est-ce un psychologue ?</b><p>Non. Evolve est un coach exigeant, pas un thérapeute. Détresse sévère → arrêt immédiat + professionnel qualifié.</p></div>
+    <div class="qa"><b>Et si le coach se trompe ?</b><p>Chaque affirmation cite une preuve : vos mots, votre CV, une mesure. Sans preuve, la phrase disparaît.</p></div>
+    <div class="qa"><b>Que mesure le score ?</b><p>Votre auto-évaluation bornée par des citations — jamais un test psychométrique validé.</p></div>
+    <div class="qa"><b>Où sont mes données ?</b><p>Dans votre compte, personne d’autre n’y touche. Suppression chirurgicale en un clic.</p></div>
+    <div class="qa"><b>La prod existe ?</b><p>Local-first aujourd’hui (LAN). La mise en production est une décision délibérée, pas un bouton.</p></div>
+    <div class="qa"><b>CV obligatoire ?</b><p>Non. L’entretien fonctionne sans CV — le CV ne sert qu’à la précision factuelle.</p></div>
+  </div>
+
+  <div class="cta">
+    <div class="cta-inner">
+      <h3>« Evolve m’a compris avant de me conseiller. »</h3>
+      <p>Quatre minutes. Deux types de preuves. Zéro phrase inventée. Le premier entretien change la conversation que vous pouvez avoir avec vous-même.</p>
+      <span class="cta-btn">Créer mon compte — gratuit</span>
+    </div>
+  </div>
+
+  <div class="foot"><span>Evolve AI · Novembre 2026</span><span>FR / AR / EN · Atlas · LangGraph</span><span>Confidentiel équipe</span></div>
+</section>
+
+</body>
+</html>
