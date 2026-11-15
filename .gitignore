@@ -38,4 +38,3 @@ staging_backups/
 compare-*.json
 last_run.json
 retry_specialists.py
-!docs/Evolve-AI-Document.html

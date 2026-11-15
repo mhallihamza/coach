@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evolve AI — Coach ambitieux, coach honnête</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23103b2a'/%3E%3Ctext x='32' y='46' font-size='34' text-anchor='middle' fill='%23c6a04e' font-family='Georgia,serif' font-weight='700'%3EE%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --forest:#103b2a; --deep:#0b2a1f; --emerald:#175c3d; --gold:#c6a04e; --gold-deep:#a8802f;
+  --cream:#f6f3ec; --cream-2:#efece1; --clay:#c2573b; --ink:#141715; --soft:rgba(20,23,21,.62);
+  --line:rgba(20,23,21,.12); --shadow:0 12px 40px rgba(11,42,31,.16);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--cream);color:var(--ink);font-family:"Inter",system-ui,sans-serif;line-height:1.6}
+@page{size:A4;margin:16mm 11mm}
+h1,h2,h3,.serif{font-family:"Fraunces",Georgia,serif;letter-spacing:-.02em}
+.eyebrow{display:inline-flex;align-items:center;gap:.55rem;font-size:.7rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--emerald);border:1px solid rgba(23,92,61,.3);border-radius:999px;padding:.35rem .8rem;background:rgba(255,255,255,.55)}
+.eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--clay)}
+.container{width:min(1140px,100% - 3rem);margin-inline:auto}
+section{padding:4.2rem 0}
+.kicker{display:block;font-size:.68rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-deep);margin-bottom:.45rem}
+h1{font-size:clamp(3rem,8vw,5.2rem);line-height:.98;color:#0b2a1f;font-weight:600}
+h2{font-size:clamp(1.75rem,3.6vw,2.5rem);line-height:1.15;color:var(--forest);font-weight:600;margin:.3rem 0 1rem}
+.lead{font-size:1.13rem;max-width:58ch;color:var(--soft)}
+.accent{color:var(--emerald);font-style:italic}
+
+/* ═══ Cover ═══ */
+.cover{min-height:100svh;display:flex;align-items:center;position:relative;overflow:hidden;background:
+  radial-gradient(1100px 700px at 82% 12%, rgba(198,160,78,.30), transparent 55%),
+  radial-gradient(900px 650px at -15% 95%, rgba(23,92,61,.28), transparent 55%),
+  var(--cream)}
+.cover-inner{display:grid;grid-template-columns:1.05fr .95fr;gap:4rem;align-items:center;padding:4rem 0}
+.cover-card{background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:1.4rem 1.5rem}
+.mark{width:84px;height:84px;border-radius:20px;display:grid;place-items:center;background:linear-gradient(150deg,var(--emerald),var(--forest));color:var(--gold);font-size:3.4rem;font-weight:700;font-family:"Fraunces",serif;box-shadow:inset 0 2px 0 rgba(255,255,255,.22),0 14px 30px rgba(16,59,42,.4)}
+.footer-note{font-size:.72rem;color:var(--soft);margin-top:2rem;border-top:1px solid var(--line);padding-top:1rem}
+.chips{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:1.3rem}
+.chip{display:inline-flex;align-items:center;gap:.35rem;font-size:.72rem;font-weight:600;border-radius:999px;padding:.28rem .7rem;border:1px solid var(--line);background:#fff}
+.chip.green{color:var(--emerald);border-color:rgba(23,92,61,.35);background:rgba(23,92,61,.07)}
+.chip.gold{color:var(--gold-deep);border-color:rgba(198,160,78,.4);background:rgba(198,160,78,.12)}
+.chip.clay{color:var(--clay);border-color:rgba(194,87,59,.35);background:rgba(194,87,59,.08)}
+
+/* ═══ Schemas ═══ */
+.diagram-card{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:1.3rem 1.4rem;overflow-x:auto}
+.diagram-card svg{display:block;min-width:680px;margin-inline:auto;max-width:100%;height:auto}
+.diagram-label{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.8rem;border-bottom:1px solid var(--line);padding-bottom:.6rem}
+.diagram-label span{font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;font-weight:700;color:var(--gold-deep)}
+
+/* ═══ Steps ═══ */
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:.7rem;margin-top:1.6rem}
+.step{background:#fff;border:1px solid var(--line);border-radius:18px;padding:1rem .85rem;position:relative}
+.step b{font-family:"Fraunces",serif;font-size:1.5rem;color:var(--emerald);display:block}
+.step h3{font-size:.88rem;margin:.3rem 0 .25rem}
+.step p{font-size:.72rem;color:var(--soft);line-height:1.5}
+
+/* ═══ Principles ═══ */
+.principles{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;margin-top:1.4rem}
+.principle{border:1px solid var(--line);border-radius:18px;padding:1.1rem 1.15rem;background:#fff}
+.principle h3{font-size:.95rem;margin:.4rem 0 .3rem;color:var(--forest)}
+.principle p{font-size:.82rem;color:var(--soft);line-height:1.55}
+.p-icon{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:var(--forest);color:var(--gold)}
+
+/* ═══ Screens grid (placeholders) ═══ */
+.screens{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin-top:1.4rem}
+.screen{background:var(--deep);border-radius:22px;padding:.55rem;box-shadow:var(--shadow)}
+.screen-inner{background:var(--cream);border-radius:16px;padding:.65rem .6rem .75rem;min-height:230px}
+.screen-bar{display:flex;justify-content:center;gap:.3rem;margin-bottom:.45rem}
+.screen-bar i{width:38px;height:4px;border-radius:2px;background:rgba(255,255,255,.35)}
+.screen h4{font-size:.72rem;font-family:"Fraunces";color:#fdfcf7;margin-bottom:.5rem;text-align:center}
+.mock-row{display:flex;align-items:center;gap:.35rem;background:#fff;border-radius:10px;padding:.28rem .38rem;margin-bottom:.3rem;font-size:.62rem;color:var(--soft);border:1px solid var(--line)}
+.mock-ring{width:44px;height:44px;border-radius:50%;background:conic-gradient(var(--gold) 0 59%,#e5e2d5 0 100%);display:grid;place-items:center;margin:.1rem auto .3rem;font-family:"Fraunces";font-weight:700;font-size:.78rem;color:var(--forest)}
+.mock-bar{height:5px;background:#e5e2d5;border-radius:3px;overflow:hidden;margin:.2rem 0 .3rem}
+.mock-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--emerald),var(--gold))}
+.mock-dot{width:7px;height:7px;border-radius:50%;background:var(--emerald)}
+
+/* ═══ Tables ═══ */
+table{width:100%;border-collapse:collapse;font-size:.78rem;margin-top:1rem}
+th,td{padding:.55rem .7rem;border-bottom:1px solid var(--line);text-align:left}
+th{font-family:"Fraunces";font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--gold-deep);background:#fff}
+tr:nth-child(even) td{background:#fffdf8}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.72rem;background:var(--cream-2);border:1px solid var(--line);border-radius:6px;padding:.05rem .35rem}
+
+/* ═══ FAQ ═══ */
+.faq{border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-top:1rem}
+.faq div{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--line)}
+.faq div:last-child{border-bottom:0}
+.faq b{padding:.75rem .95rem;font-size:.82rem;background:#fff}
+.faq p{padding:.75rem .95rem;font-size:.82rem;color:var(--soft);background:var(--cream-2)}
+
+/* ═══ Safety / CTA ═══ */
+.safety{background:var(--deep);color:#f6f3ec;border-radius:22px;padding:1.6rem 1.8rem;margin-top:1.4rem}
+.safety h3{color:var(--gold);font-size:1.1rem;margin-bottom:.5rem}
+.safety ul{margin-left:1.1rem;line-height:1.8;font-size:.85rem;color:rgba(246,243,236,.85)}
+
+.final{padding:3.4rem 0 4.5rem;text-align:center}
+.final h2{margin-inline:auto;max-width:22ch}
+.cta{display:inline-flex;align-items:center;gap:.6rem;background:var(--forest);color:#fdfcf7;border-radius:999px;padding:1rem 2rem;font-weight:700;text-decoration:none;margin-top:1.3rem;box-shadow:0 12px 26px rgba(16,59,42,.35)}
+.grid-2{display:grid;grid-template-columns:1.15fr .85fr;gap:2rem;align-items:center}
+
+@media print{
+  .cover{min-height:auto;padding:2rem 0}
+  section{padding:1.6rem 0;page-break-inside:avoid}
+  .screen,.principle,.step,.diagram-card,.principle,table,.faq{page-break-inside:avoid}
+  a{color:inherit;text-decoration:none}
+}
+@media(max-width:900px){.cover-inner,.grid-2,.steps{grid-template-columns:1fr}.screens{grid-template-columns:repeat(2,1fr)}.principles{grid-template-columns:1fr}.cover-card{display:none}}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ COUVERTURE ═══════════════ -->
+<header class="cover">
+  <div class="container cover-inner">
+    <div>
+      <span class="eyebrow">Coach IA ambitieux · développement personnel · FR / AR / EN</span>
+      <h1 style="margin:1.3rem 0 1.2rem">Le coach qui vous<br><span class="accent">comprend</span> avant<br>de vous conseiller.</h1>
+      <p class="lead">Evolve n’est pas un chatbot. C’est un coach exigeant qui lit votre CV, vous interroge en face-à-face, vous montre vos angles morts — puis construit avec vous un plan 30/60/90 jours, mesuré et suivi.</p>
+      <div class="chips">
+        <span class="chip green">Preuve ou silence</span>
+        <span class="chip gold">Zéro diagnostic</span>
+        <span class="chip clay">Approbation utilisateur</span>
+      </div>
+      <div class="footer-note">Document produit · Novembre 2026 · v1.0 · Local-first (LAN) · Non publié en production · <strong>confidentiel équipe</strong></div>
+    </div>
+    <div class="cover-card">
+      <div style="display:flex;align-items:center;gap:.9rem;margin-bottom:1rem">
+        <div class="mark">E</div>
+        <div><div class="serif" style="font-size:1.5rem;font-weight:600;color:var(--forest)">Evolve<span class="accent">.</span></div><div style="font-size:.72rem;color:var(--soft);letter-spacing:.08em;text-transform:uppercase;font-weight:600">Coach personnel</div></div>
+      </div>
+      <div class="mock-row"><span class="mock-dot"></span> Compte créé · CV importé · objectif défini</div>
+      <div class="mock-bar"><i style="width:82%"></i></div>
+      <div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--soft);margin-bottom:.6rem"><span>Évaluation Evolve — 14/18</span><span style="color:var(--emerald);font-weight:700">78%</span></div>
+      <div class="mock-row">« Pourquoi l’IA maintenant ? »</div>
+      <div class="mock-row">QCM · Échelle 1–10 · question ouverte — jamais 2 à la fois</div>
+      <div style="display:flex;gap:.9rem;align-items:center;background:var(--cream);border:1px solid var(--line);border-radius:14px;padding:.55rem .7rem;margin-top:.6rem">
+        <div class="mock-ring" style="margin:0;width:58px;height:58px;font-size:.95rem">59</div>
+        <div style="font-size:.68rem;color:var(--soft);line-height:1.5"><strong style="color:var(--forest)">Readiness Score</strong><br/>4 forces · 1 gap · 4 limites<br/><em>tout cité depuis vos réponses</em></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════ LE PROBLÈME ═══════════════ -->
+<section>
+  <div class="container">
+    <span class="kicker">01 · Le problème</span>
+    <h2>Deux murs qui bloquent<br>les gens ambitieux.</h2>
+    <div class="principles" style="margin-top:1.2rem">
+      <div class="principle"><div class="p-icon">→</div><h3>Mur n°1 — Le cap flou</h3><p>« Je veux réussir » n’est pas une direction. Les objectifs vagues produisent des efforts vagues — et des résultats que personne ne mesure.</p></div>
+      <div class="principle"><div class="p-icon">→</div><h3>Mur n°2 — La politesse qui tue</h3><p>Les amis ménagent, les managers évitent, les IA flattent. Résultat : personne ne nomme ce qui bloque réellement — les limites internes (peur, perfectionnisme) et externes (temps, argent).</p></div>
+      <div class="principle"><div class="p-icon">→</div><h3>Le piège d’aujourd’hui</h3><p>Les assistants IA génèrent des réponses plausibles non fondées : aucun chiffre, aucune preuve, aucune responsabilité. Du remplissage optimiste, pas du coaching.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ LA BOUCLE ═══════════════ -->
+<section style="background:var(--cream-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="container">
+    <span class="kicker">02 · La solution</span>
+    <h2>Une seule boucle.<br><span class="accent">La boucle Evolve.</span></h2>
+    <p class="lead" style="margin-bottom:.2rem">Du premier « bonjour » au mois 3 — chaque étape nourrit la suivante.</p>
+    <div class="steps">
+      <div class="step"><b>01</b><h3>Compte</h3><p>Inscription (obligatoire). CV optionnel. Objectif : cible, horizon, heures/semaine.</p></div>
+      <div class="step"><b>02</b><h3>Évaluation</h3><p>18 questions mixtes — ouvertes, QCM, 1–10 — personnalisées depuis CV × objectif × réponses.</p></div>
+      <div class="step"><b>03</b><h3>Rapport</h3><p>Score /100, forces documentées, gaps prioritaires, limites internes/externes. Tout cité.</p></div>
+      <div class="step"><b>04</b><h3>Plan</h3><p>30/60/90 jours. 1 objectif SMART par gap, jalons hebdo sur vos vraies heures. Vous approuvez tout.</p></div>
+      <div class="step"><b>05</b><h3>Suivi</h3><p>Re-mesure mensuelle, détection de patterns, adaptation du plan — jamais de blâme, jamais d’étiquettes.</p></div>
+    </div>
+
+    <div class="diagram-card" style="margin-top:1.4rem">
+      <div class="diagram-label"><span>Schéma — la boucle complète</span><em style="font-size:.75rem;color:var(--soft)">boucle fermée · mesurable · suivie</em></div>
+      <svg viewBox="0 0 760 210" role="img" aria-label="La boucle Evolve : compte, CV, objectif, évaluation, rapport, plan, suivi">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#175c3d"/></marker>
+          <linearGradient id="gGold" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c6a04e"/><stop offset="1" stop-color="#a8802f"/></linearGradient>
+        </defs>
+        <g font-family="Inter, sans-serif" font-size="12" fill="#0b2a1f">
+          <rect x="0" y="30" width="130" height="56" rx="12" fill="#fffdf8" stroke="#175c3d"/><text x="65" y="53" text-anchor="middle" font-weight="700">Compte</text><text x="65" y="70" text-anchor="middle" font-size="10" fill="#5a5f5a">obligatoire</text>
+          <line x1="130" y1="58" x2="163" y2="58" stroke="#175c3d" stroke-width="2" marker-end="url(#arrow)"/>
+          <rect x="165" y="30" width="130" height="56" rx="12" fill="#fffdf8" stroke="#175c3d"/><text x="230" y="53" text-anchor="middle" font-weight="700">CV + objectif</text><text x="230" y="70" text-anchor="middle" font-size="10" fill="#5a5f5a">optionnels mais puissants</text>
+          <line x1="295" y1="58" x2="328" y2="58" stroke="#175c3d" stroke-width="2" marker-end="url(#arrow)"/>
+          <rect x="330" y="30" width="130" height="56" rx="12" fill="#fffdf8" stroke="#c6a04e" stroke-width="2"/><text x="395" y="53" text-anchor="middle" font-weight="700">Évaluation</text><text x="395" y="70" text-anchor="middle" font-size="10" fill="#a8802f">18 Q · 4 min</text>
+          <line x1="460" y1="58" x2="493" y2="58" stroke="#175c3d" stroke-width="2" marker-end="url(#arrow)"/>
+          <rect x="495" y="30" width="130" height="56" rx="12" fill="#fffdf8" stroke="#175c3d"/><text x="560" y="53" text-anchor="middle" font-weight="700">Rapport</text><text x="560" y="70" text-anchor="middle" font-size="10" fill="#5a5f5a">preuves ou silence</text>
+          <line x1="625" y1="58" x2="660" y2="58" stroke="#175c3d" stroke-width="2" marker-end="url(#arrow)"/>
+          <rect x="660" y="30" width="100" height="56" rx="12" fill="url(#gGold)"/><text x="710" y="53" text-anchor="middle" font-weight="700" fill="#2b2110">Plan</text><text x="710" y="70" text-anchor="middle" font-size="10" fill="#2b2110">approbation</text>
+          <path d="M710 86 C 710 150, 395 175, 395 110" fill="none" stroke="#c2573b" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#arrow)"/>
+          <text x="545" y="165" text-anchor="middle" font-size="11" fill="#c2573b" font-weight="700">suivi mensuel + ré-évaluation</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ PRINCIPES ═══════════════ -->
+<section>
+  <div class="container">
+    <span class="kicker">03 · Les principes, non négociables</span>
+    <h2>Trois règles qui font le produit.</h2>
+    <div class="principles">
+      <div class="principle"><div class="p-icon">01</div><h3>Preuve ou silence</h3><p>Chaque affirmation cite une réponse verbatim de l’utilisateur, une ligne précise de son CV, ou une mesure. Sans citation, la phrase n’existe pas. L’IA travaille pour la promesse, jamais contre.</p></div>
+      <div class="principle"><div class="p-icon">02</div><h3>Zéro diagnostic</h3><p>Pas de psychiatrie, pas d’étiquettes, pas de « vous êtes perfectionniste » comme verdict. Evolve nomme des hypothèses avec preuves. En cas de détresse sévère → arrêt immédiat + orientation vers un professionnel.</p></div>
+      <div class="principle"><div class="p-icon">03</div><h3>Approbation avant sauvegarde</h3><p>Un objectif, un plan ou un jalon n’est créé que sur votre clic « Créer mon plan ». Le rapport est une mesure (licite d’être auto-enregistré). Tout engagement personnel exige votre « oui ».</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ DÉMO EN 7 ÉCRANS ═══════════════ -->
+<section style="background:var(--cream-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="container">
+    <span class="kicker">04 · Le produit en 7 écrans</span>
+    <h2>Ce que l’utilisateur voit.</h2>
+    <div class="screens">
+
+      <div class="screen"><div class="screen-bar"><i></i></div><h4>1 · Landing</h4><div class="screen-inner"><div style="font-family:Fraunces,serif;font-size:.78rem;font-weight:600;line-height:1.2;color:#0b2a1f;margin-bottom:.3rem">Le coach qui vous <span style="color:var(--emerald);font-style:italic">comprend</span> avant de vous conseiller</div><div style="background:var(--forest);color:#fdfcf7;border-radius:999px;padding:.3rem .55rem;font-size:.62rem;text-align:center;margin:.4rem 0">Créer mon compte →</div><div class="mock-row">« Après le premier entretien, Evolve avait compris quelque chose… » — Sofia</div></div></div>
+
+      <div class="screen"><div class="screen-bar"><i></i></div><h4>2 · Tableau de bord</h4><div class="screen-inner"><div class="mock-row"><strong>Readiness</strong> · 59/100</div><div class="mock-row">Objectifs actifs · 3</div><div class="mock-row">Constance habitudes · 78%</div><div class="mock-row"><strong>Dernier gap</strong> · surcharge</div><div style="height:26px"></div><div class="mock-row" style="border-left:3px solid var(--gold)">Focus semaine : 30 min/jour sur « perfectionnisme »</div></div></div>
+
+      <div class="screen"><div class="screen-bar"><i></i></div><h4>3 · Évaluation</h4><div class="screen-inner"><div style="display:flex;justify-content:space-between;font-size:.62rem;color:var(--soft)"><span><strong>7/18</strong></span><span style="color:var(--emerald);font-weight:700">Direction</span></div><div class="mock-bar"><i style="width:39%"></i></div><div class="mock-row" style="border-left:3px solid var(--gold)">« En une phrase — ce que tu veux vraiment accomplir »</div><div class="mock-row">Réponse : devenir data analyst…</div><div style="display:flex;gap:.3rem"><button style="flex:1;border:0;border-radius:8px;background:var(--forest);color:#fdfcf7;font-size:.65rem;padding:.3rem">A</button><button style="flex:1;border:0;border-radius:8px;background:var(--forest);color:#fdfcf7;font-size:.65rem;padding:.3rem">B</button><button style="flex:1;border:0;border-radius:8px;background:var(--forest);color:#fdfcf7;font-size:.65rem;padding:.3rem">C</button></div></div></div>
+
+      <div class="screen"><div class="screen-bar"><i></i></div><h4>4 · Résultat</h4><div class="screen-inner"><div class="mock-ring">59</div><div class="mock-row" style="font-size:.66rem;justify-content:center;color:var(--emerald);font-weight:700">En progression — des gaps restent</div><div class="mock-row"><strong>+</strong> Clarté du cap · 7/10</div><div class="mock-row"><strong>−</strong> Perfectionnisme · 8/10</div><div class="mock-row" style="border-left:3px solid var(--clay)">Limite interne : surcharge</div></div></div>
+
+      <div class="screen"><div class="screen-bar"><i></i></div><h4>5 · Mon plan</h4><div class="screen-inner"><div class="mock-row" style="border-left:3px solid var(--emerald)"><strong>Réduire la surcharge</strong> · 30 j</div><div style="font-size:.6rem;color:var(--soft);margin:.2rem 0 .3rem .2rem">S1 : diagnostic · 3h/sem<br/>S2 : premier livrable « bon »<br/>S4 : bilan mesuré 1–10</div><div class="mock-row">Ressources : Coursera — Learning How to Learn</div><div style="background:var(--forest);color:#fdfcf7;border-radius:999px;padding:.32rem .55rem;font-size:.64rem;text-align:center;margin-top:.3rem">Créer mon plan (1 objectif)</div></div></div>
+
+      <div class="screen"><div class="screen-bar"><i></i></div><h4>6 · Mon rapport</h4><div class="screen-inner"><div class="mock-ring">59</div><div class="mock-row" style="justify-content:center;font-size:.62rem;color:var(--soft)">Readiness Score — cité depuis vos réponses</div><div class="mock-row">Cible : Analyste financier &amp; stratégie · 12 mois · 5h/sem</div><div class="mock-row" style="border-left:3px solid var(--emerald)">Forces : cap direction · analyse</div><div class="mock-row" style="border-left:3px solid var(--clay)">Gap : régulation · evidence citée</div></div></div>
+
+      <div class="screen"><div class="screen-bar"><i></i></div><h4>7 · Coach</h4><div class="screen-inner"><div style="font-size:.62rem;color:var(--soft);margin-bottom:.3rem"><span style="background:var(--forest);color:#fdfcf7;border-radius:6px;padding:.05rem .35rem;font-weight:700">Q2</span> à choix</div><div class="mock-row" style="border-left:3px solid var(--pine)">« Pourquoi ce métier, pourquoi maintenant ? »</div><div class="mock-row"><button style="flex:1;border:0;border-radius:8px;background:var(--forest);color:#fdfcf7;font-size:.6rem;padding:.28rem">A</button><button style="flex:1;border:0;border-radius:8px;background:var(--forest);color:#fdfcf7;font-size:.6rem;padding:.28rem">B</button><button style="flex:1;border:0;border-radius:8px;background:var(--forest);color:#fdfcf7;font-size:.6rem;padding:.28rem">C</button></div><div class="mock-row" style="font-size:.6rem">🔊 dictée optionnelle · FR / AR / EN</div></div></div>
+
+      <div class="screen"><div class="screen-bar"><i></i></div><h4>+ · Objectifs &amp; PDF</h4><div class="screen-inner"><div class="mock-row">Jalons hebdo · 1/7</div><div class="mock-row">Jalons · 1 livre vérifié</div><div class="mock-row">Rééval. mensuelle auto</div><div class="mock-row" style="border-left:3px solid var(--gold)">Export PDF — partageable</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ POURQUOI CE N’EST PAS UN CHATBOT ═══════════════ -->
+<section>
+  <div class="container">
+    <span class="kicker">05 · Intelligence</span>
+    <h2>Pourquoi ce n’est pas<br>un chatbot de plus.</h2>
+    <div class="grid-2">
+      <div>
+        <p class="lead" style="margin-bottom:.9rem">Le coach Evolve suit un protocole de supervision agentique : chaque tour suit toujours le même chemin, jamais improvisé par un LLM unique.</p>
+        <ul style="margin-left:1.15rem;line-height:1.9;color:var(--ink);font-size:.9rem">
+          <li><strong>Ordre des probes, obligatoire</strong> : pourquoi → concept clé du domaine → scénario → profondeur CV → sources → calibration 1–10. Avant toute question de profil.</li>
+          <li><strong>1 question par tour.</strong> Jamais deux. La carte disparaît, la réponse affine la suivante.</li>
+          <li><strong>Arrêt serveur, pas LLM</strong> : « fais un plan », « assez », 3× « je ne sais pas », couverture complète → synthèse + livraison. Fini les 30 questions en boucle.</li>
+          <li><strong>Claim-check automatique</strong> : aucun énoncé utilisateur n’est validé avant qu’un quality gate ait vérifié l’ancrage de chaque affirmation dans une preuve.</li>
+        </ul>
+      </div>
+      <div class="diagram-card">
+        <div class="diagram-label"><span>Schéma — tour de conversation</span><em style="font-size:.72rem;color:var(--soft)">chaque tour, sans exception</em></div>
+        <svg viewBox="0 0 420 300" role="img" aria-label="Pipeline: message → supervisor → specialist → quality_gate → synthèse coach">
+          <defs><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#175c3d"/></marker></defs>
+          <g font-family="Inter, sans-serif" font-size="11.5" font-weight="600" fill="#0b2a1f">
+            <rect x="10" y="10" width="120" height="34" rx="9" fill="#fffdf8" stroke="#175c3d"/><text x="70" y="31" text-anchor="middle">Message user</text>
+            <rect x="10" y="72" width="120" height="34" rx="9" fill="#fffdf8" stroke="#175c3d"/><text x="70" y="93" text-anchor="middle">Détection langue</text>
+            <rect x="10" y="134" width="120" height="34" rx="9" fill="#fffdf8" stroke="#c6a04e" stroke-width="2"/><text x="70" y="155" text-anchor="middle">Supervisor</text>
+            <rect x="170" y="134" width="120" height="34" rx="9" fill="#fffdf8" stroke="#175c3d"/><text x="230" y="155" text-anchor="middle">Spécialiste</text>
+            <rect x="330" y="134" width="80" height="34" rx="9" fill="#103b2a"/><text x="370" y="155" text-anchor="middle" fill="#f6f3ec">Quality</text>
+            <rect x="170" y="230" width="120" height="34" rx="9" fill="#fffdf8" stroke="#175c3d"/><text x="230" y="251" text-anchor="middle">Synthèse coach</text>
+            <line x1="70" y1="44" x2="70" y2="70" stroke="#175c3d" stroke-width="2" marker-end="url(#a2)"/>
+            <line x1="70" y1="106" x2="70" y2="132" stroke="#175c3d" stroke-width="2" marker-end="url(#a2)"/>
+            <line x1="130" y1="151" x2="168" y2="151" stroke="#175c3d" stroke-width="2" marker-end="url(#a2)"/>
+            <line x1="290" y1="151" x2="328" y2="151" stroke="#175c3d" stroke-width="2" marker-end="url(#a2)"/>
+            <line x1="370" y1="168" x2="370" y2="220" stroke="#175c3d" stroke-width="2" marker-end="url(#a2)"/>
+            <line x1="370" y1="247" x2="292" y2="247" stroke="#175c3d" stroke-width="2" marker-end="url(#a2)"/>
+            <line x1="230" y1="134" x2="230" y2="108" stroke="#a8802f" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#a2)"/>
+            <text x="238" y="120" font-size="9.5" fill="#a8802f">evidence ⇐</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+    <div class="diagram-card" style="margin-top:1.2rem">
+      <div class="diagram-label"><span>Spécialistes LangGraph (l’agentique Evolve)</span><em style="font-size:.72rem;color:var(--soft)">chaque état = un service isolé, port dédié</em></div>
+<svg viewBox="0 0 760 205" role="img" aria-label="Orchestrateur + 7 spécialistes + MCP tools">
+        <g font-family="Inter, sans-serif" font-size="10" fill="#0b2a1f">
+          <rect x="255" y="10" width="250" height="44" rx="12" fill="#103b2a"/><text x="380" y="28" text-anchor="middle" fill="#f6f3ec" font-weight="800" font-size="12">Supervisor · :8020</text><text x="380" y="44" text-anchor="middle" fill="#c6a04e" font-size="9">route · quality gate · synthèse</text>
+          <line x1="310" y1="54" x2="110" y2="78" stroke="#175c3d" stroke-width="1.6"/><line x1="350" y1="54" x2="270" y2="78" stroke="#175c3d" stroke-width="1.6"/><line x1="380" y1="54" x2="470" y2="78" stroke="#175c3d" stroke-width="1.6"/><line x1="430" y1="54" x2="660" y2="78" stroke="#175c3d" stroke-width="1.6"/>
+          <rect x="30" y="80" width="140" height="34" rx="8" fill="#fffdf8" stroke="#175c3d"/><text x="100" y="101" text-anchor="middle">Self_Discovery :8501</text>
+          <rect x="180" y="80" width="140" height="34" rx="8" fill="#fffdf8" stroke="#175c3d"/><text x="250" y="101" text-anchor="middle">Skills_Assess :8502</text>
+          <rect x="330" y="80" width="150" height="34" rx="8" fill="#fffdf8" stroke="#175c3d"/><text x="405" y="101" text-anchor="middle">Dev_Planner :8503</text>
+          <rect x="490" y="80" width="120" height="34" rx="8" fill="#fffdf8" stroke="#175c3d"/><text x="550" y="101" text-anchor="middle">Progress :8504</text>
+          <rect x="620" y="80" width="120" height="34" rx="8" fill="#fffdf8" stroke="#175c3d"/><text x="680" y="101" text-anchor="middle">CV_Gap :8505</text>
+          <rect x="30" y="124" width="150" height="34" rx="8" fill="#fffdf8" stroke="#175c3d"/><text x="105" y="145" text-anchor="middle">Quality_Gate :8506</text>
+          <rect x="190" y="124" width="150" height="34" rx="8" fill="#fffdf8" stroke="#175c3d"/><text x="265" y="145" text-anchor="middle">Knowledge_RAG :8507</text>
+          <rect x="400" y="124" width="340" height="34" rx="8" fill="#0b2a1f"/><text x="570" y="145" text-anchor="middle" fill="#c6a04e" font-weight="700">MCP — 45 outils vérifiés · MongoDB Atlas (db “coach”)</text>
+        </g></svg>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ ARCHITECTURE ═══════════════ -->
+<section style="background:var(--cream-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="container">
+    <span class="kicker">06 · Architecture · LangGraph</span>
+    <h2>Agentique, locale-first,<br>observable.</h2>
+    <div class="diagram-card">
+      <div class="diagram-label"><span>Schéma — architecture complète</span><em style="font-size:.72rem;color:var(--soft)">locale ou staging · JWT HS256 · Mongo Atlas</em></div>
+      <svg viewBox="0 0 760 340" role="img" aria-label="Web :3000 → FastAPI :8001 → LangGraph supervisor :8020 → agents :8501-8507 → MCP :8310 → Mongo Atlas">
+        <g font-family="Inter, sans-serif" font-size="10.5" fill="#0b2a1f">
+          <rect x="240" y="8" width="280" height="40" rx="12" fill="#103b2a"/><text x="380" y="26" text-anchor="middle" fill="#f6f3ec" font-weight="800">Web — Next.js · :3000</text><text x="380" y="41" text-anchor="middle" fill="#c6a04e" font-size="9.5">FR · AR · EN — Fraunces/Inter</text>
+          <line x1="380" y1="48" x2="380" y2="70" stroke="#175c3d" stroke-width="2.4"/>
+          <rect x="240" y="72" width="280" height="46" rx="12" fill="#fffdf8" stroke="#175c3d" stroke-width="2"/><text x="380" y="92" text-anchor="middle" font-weight="800">Backend FastAPI · :8001</text><text x="380" y="107" text-anchor="middle" fill="#5a5f5a">/api/* · JWT · guards</text>
+          <line x1="380" y1="118" x2="150" y2="150" stroke="#175c3d" stroke-width="2"/><line x1="380" y1="118" x2="380" y2="150" stroke="#175c3d" stroke-width="2"/><line x1="380" y1="118" x2="610" y2="150" stroke="#175c3d" stroke-width="2"/>
+          <rect x="30" y="152" width="240" height="56" rx="12" fill="#fffdf8" stroke="#c6a04e" stroke-width="2"/><text x="150" y="174" text-anchor="middle" font-weight="800">LangGraph supervisor · :8020</text><text x="150" y="191" text-anchor="middle" fill="#a8802f" font-size="9.5">route → agent → quality_gate</text>
+          <rect x="300" y="152" width="160" height="56" rx="12" fill="#fffdf8" stroke="#175c3d"/><text x="380" y="174" text-anchor="middle" font-weight="800">CV service · :8300</text><text x="380" y="191" text-anchor="middle" fill="#5a5f5a" font-size="9.5">ingest · chunk · search</text>
+          <rect x="490" y="152" width="240" height="56" rx="12" fill="#fffdf8" stroke="#175c3d"/><text x="610" y="174" text-anchor="middle" font-weight="800">MCP · :8310</text><text x="610" y="191" text-anchor="middle" fill="#5a5f5a" font-size="9.5">45 outils · Mongo `coach`</text>
+          <line x1="150" y1="208" x2="150" y2="240" stroke="#175c3d" stroke-width="2"/><line x1="380" y1="208" x2="380" y2="240" stroke="#175c3d" stroke-width="2"/><line x1="610" y1="208" x2="610" y2="240" stroke="#175c3d" stroke-width="2"/>
+          <rect x="30" y="242" width="680" height="40" rx="12" fill="#0b2a1f"/><text x="370" y="266" text-anchor="middle" fill="#f6f3ec" font-weight="800" font-size="12.5">MongoDB Atlas — db « coach » · $text · chunks · reports</text>
+          <circle cx="52" cy="262" r="6" fill="#c6a04e"/><text x="64" y="267" fill="#c6a04e" font-size="11" font-weight="700">E</text>
+        </g>
+      </svg>
+    </div>
+    <table>
+      <thead><tr><th>Composant</th><th>Port</th><th>Rôle</th></tr></thead>
+      <tbody>
+        <tr><td>Next.js (App Router)</td><td><code>3000</code></td><td>UI premium, FR/AR/EN, design system custom</td></tr>
+        <tr><td>FastAPI</td><td><code>8001</code></td><td>API REST, auth JWT, évaluation, plan, rapports, PDF</td></tr>
+        <tr><td>LangGraph supervisor + 7 spécialistes</td><td><code>8020 · 8501-8507</code></td><td>Supervision agentique : route → spécialiste → quality gate → synthèse</td></tr>
+        <tr><td>MCP server</td><td><code>8310</code></td><td>Outils : CV/mémoire/goals/habits/reports/resources</td></tr>
+        <tr><td>CV service (FastAPI)</td><td><code>8300</code></td><td>Pipeline CV : parse → clean → chunk → $text</td></tr>
+        <tr><td>MongoDB Atlas</td><td>—</td><td><code>users · consents · career_objectives · cvs · cv_chunks · gap_reports · goals · assessments · habits · reports · memories</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════ SÉCURITÉ ═══════════════ -->
+<section>
+  <div class="container">
+    <span class="kicker">07 · Sécurité</span>
+    <h2>Chaque promesse est<br>traçable.</h2>
+    <div class="safety">
+      <h3>Ce qu’on s’interdit, par écrit</h3>
+      <ul>
+        <li>Clés, mots de passe, URIs Mongo vivent dans des <code>.env</code> git-ignorés — jamais dans le dépôt ni ce document.</li>
+        <li>Données cloisonnées par <code>userId</code> partout : Mongo, CV, chat, rapports — aucun partage inter-utilisateur.</li>
+        <li>Consentements granulaires (mémoire, CV, PDF) et suppression chirurgicale en un clic.</li>
+        <li>Les textes récupérés sont des données, jamais des instructions (anti prompt-injection).</li>
+        <li>Toute question critique de détresse → arrêt immédiat + redirection vers un professionnel. Non négociable.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FAQ ═══════════════ -->
+<section style="padding-bottom:1rem">
+  <div class="container">
+    <span class="kicker">08 · FAQ</span>
+    <h2>Ce que vos questions<br>les plus franches méritent.</h2>
+    <div class="faq">
+      <div><b>Est-ce un psychologue ?</b><p>Non. Evolve est un coach exigeant, pas un thérapeute. Détresse sévère → arrêt immédiat + professionnel.</p></div>
+      <div><b>Et si le coach se trompe ?</b><p>Chaque affirmation cite une preuve — vos mots, votre CV, une mesure. Sans preuve, la phrase disparaît.</p></div>
+      <div><b>Que mesure le score ?</b><p>Une auto-mesure bornée par citations — jamais un diagnostic psychométrique validé.</p></div>
+      <div><b>Où vont mes données ?</b><p>Dans votre compte ; personne d’autre n’y accède ; suppression complète en un clic.</p></div>
+      <div><b>La production existe-t-elle ?</b><p>Local-first aujourd’hui (staging LAN). La prod = décision délibérée, pas un bouton.</p></div>
+      <div><b>CV obligatoire ?</b><p>Non. L’entretien conduit à froid fonctionne aussi — le CV ne sert qu’à la précision factuelle.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CTA FINAL ═══════════════ -->
+<section class="final">
+  <div class="container">
+    <span class="kicker" style="justify-content:center;display:block;text-align:center">09 · La promesse</span>
+    <h2>« Evolve m’a compris avant<br>de me conseiller. »</h2>
+    <p class="lead" style="margin-inline:auto">Quatre minutes. Deux types de preuves. Zéro phrase inventée.</p>
+    <a class="cta" href="/dashboard/evaluation">Créer mon compte — gratuit <span aria-hidden>→</span></a>
+    <div class="footer-note" style="border:0;margin-top:2rem">Evolve AI · Coach de développement personnel · FR / AR / EN · Local-first · MongoDB Atlas · LangGraph · Novembre 2026</div>
+  </div>
+</section>
+
+</body>
+</html>
